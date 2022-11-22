@@ -90,7 +90,7 @@ const promptsAndWeightsFromNodes = (nodes) => {
   const markerPos = nodes.find((n) => n.type === 'marker').position
 
   const distances = positions.map(([x, y]) =>
-    Math.hypot(markerPos.x - x, markerPos.y - y)
+    1 / Math.hypot(markerPos.x - x, markerPos.y - y)
   )
 
   const totalDistance = distances.reduce((a, b) => a + b, 0)
