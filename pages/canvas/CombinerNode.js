@@ -56,7 +56,7 @@ const CombinerNode = ({ id, data }) => {
             key={i}
             style={{ background: nodes[i].data.color, color: 'black' }}
           >
-            {nodes[i].id}: {w.toFixed(2)}
+            {nodes[i].id}: {(w * 100).toFixed(0)}%
           </Badge>
         ))}
       </Flex>

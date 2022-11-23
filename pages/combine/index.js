@@ -41,9 +41,6 @@ export default function Combine() {
     reader.onload = function () {
       setImage(reader.result)
     }
-    // encode png raw data
-
-    // response.data is an image, set it as the src of an image
   }
 
   return (
@@ -92,14 +89,13 @@ export default function Combine() {
       >
         <Button onClick={() => onGenerate()}>Generate</Button>
       </Flex>
-      {/* {toQueryString(convert(prompt1, prompt2, value))} */}
       <Flex
         mt={24}
         direction={{ base: 'column', sm: 'row' }}
         gap={{ base: 'sm', sm: 'lg' }}
         justify={{ sm: 'center' }}
       >
-        <Card shadow="sm" p="sm" radius="md" withBorder w={600}>
+        <Card shadow="sm" p="sm" radius="md" withBorder w={512}>
           <Card.Section>
             <Image src={image} height={512} width={512} withPlaceholder />
           </Card.Section>
