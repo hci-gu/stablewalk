@@ -5,14 +5,14 @@ const colors = allColors[0]
 let id = 1
 const getId = () => `${id++}`
 
-export const newPromptNode = () => {
+export const newPromptNode = (prompt = '') => {
   const id = getId()
   return {
     id,
     type: 'prompt',
     data: {
       label: 'Prompt ' + id,
-      prompt: '',
+      prompt,
       color: colors[parseInt(id) % colors.length],
     },
     position: { x: 100, y: 100 },
@@ -28,6 +28,19 @@ export const newCombinerNode = () => {
       label: 'combiner ' + id,
     },
     position: { x: 100, y: 100 },
+  }
+}
+
+export const newImageNode = (image, position) => {
+  const id = getId()
+  return {
+    id,
+    type: 'image',
+    data: {
+      label: 'image ' + id,
+      image,
+    },
+    position,
   }
 }
 
@@ -72,3 +85,5 @@ export const initialNodes = []
 // ]
 
 export const basePromptAtom = atom(null)
+
+export const seedAtom = atom(null)
