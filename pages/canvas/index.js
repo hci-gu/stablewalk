@@ -58,7 +58,13 @@ export default function Canvas() {
         <AddCombinerButton setNodes={setNodes} />
         <BasePromptInput />
       </Flex>
-      <div style={{ width: '85vw', height: '80vh' }}>
+      <div
+        style={{
+          marginTop: 8,
+          width: '95vw',
+          height: '85vh',
+        }}
+      >
         <ReactFlow
           nodes={nodes}
           onNodesChange={onNodesChange}
