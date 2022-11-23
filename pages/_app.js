@@ -8,16 +8,16 @@ const Layout = ({ children }) => {
   const router = useRouter()
 
   return (
-    <div style={{ margin: '64px auto', width: '85%' }}>
+    <>
       <Tabs value={router.pathname} onTabChange={(value) => router.push(value)}>
-        <Tabs.List>
+        <Tabs.List p={4}>
           <Tabs.Tab value="/">Grid</Tabs.Tab>
           <Tabs.Tab value="/combine">Combine</Tabs.Tab>
           <Tabs.Tab value="/canvas">Canvas</Tabs.Tab>
         </Tabs.List>
       </Tabs>
-      <div style={{ marginTop: '24px' }}>{children}</div>
-    </div>
+      <div style={{ margin: '32px auto', width: '90%' }}>{children}</div>
+    </>
   )
 }
 
