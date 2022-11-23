@@ -15,7 +15,7 @@ const GenerateButton = ({ nodeId }) => {
     const { nodeInternals } = store.getState()
     const nodes = Array.from(nodeInternals.values())
 
-    const weights = weightsForNodes(nodes)
+    const weights = weightsForNodes(nodes, nodeId)
     const prompts = promptsForNodes(nodes, basePrompt)
     const response = await axios.post(
       `http://leviathan.itit.gu.se:5000/combine`,
@@ -46,11 +46,11 @@ const CombinerNode = ({ id, data }) => {
   const store = useStoreApi()
   const { nodeInternals } = store.getState()
   const nodes = Array.from(nodeInternals.values())
-  const weights = weightsForNodes(nodes)
+  const weights = weightsForNodes(nodes, id)
 
   return (
-    <Flex direction={{ base: 'column' }} gap="xs">
-      <Flex direction={{ base: 'row' }} gap="xs">
+    <Flex direction="column" align="center" gap="xs">
+      <Flex gap="xs">
         {weights.map((w, i) => (
           <Badge
             key={i}
