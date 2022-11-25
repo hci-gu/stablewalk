@@ -35,8 +35,10 @@ export default async function handler(req, res) {
     .post('http://leviathan.itit.gu.se:5000/combine', body, {
       responseType: 'stream',
     })
-    .then((response) =>
-      response.data.pipe(fs.createWriteStream(`${imgPath}/${fileName}`))
-    )
-    .then(() => res.send(`/images/${fileName}`))
+    .then((response) => {
+      response.data.pipe(fs.createWriteStream(path.join(imgPath, fileName)))
+      response.data.on('end', () => {
+        res.send(`/images/${fileName}`)
+      })
+    })
 }
