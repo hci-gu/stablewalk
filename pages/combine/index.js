@@ -99,7 +99,7 @@ export default function Combine() {
 
   const createGif = () => {
     const body = {
-      images,
+      images: images.map((i) => i.url),
     }
     axios.post('/api/gif', body).then((response) => {
       console.log(response)
