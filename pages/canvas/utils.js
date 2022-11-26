@@ -13,10 +13,8 @@ export const weightsForNodes = (nodes, combinerId) => {
   return weights
 }
 
-export const promptsForNodes = (nodes, basePrompt) => {
+export const promptsForNodes = (nodes) => {
   const promptNodes = nodes.filter((n) => n.type === 'prompt')
 
-  return promptNodes.map(
-    (n) => `${n.data.prompt}${basePrompt ? ', ' + basePrompt : ''}`
-  )
+  return promptNodes.map((n) => `${n.data.prompts[0]}`)
 }

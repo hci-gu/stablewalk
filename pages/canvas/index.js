@@ -1,36 +1,24 @@
-import ReactFlow, {
-  Background,
-  Controls,
-  useNodesState,
-  useStoreApi,
-} from 'reactflow'
+import ReactFlow, { Background, Controls, useNodesState } from 'reactflow'
 import 'reactflow/dist/style.css'
-import {
-  basePromptAtom,
-  initialNodes,
-  newCombinerNode,
-  newPromptNode,
-  seedAtom,
-} from './state'
+import { initialNodes, newCombinerNode, newPromptNode } from './state'
+import { seedAtom, basePromptAtom } from '../../src/state'
 import { Button, Flex, TextInput } from '@mantine/core'
 import { useAtom } from 'jotai'
-import * as api from './api'
 
 import CombinerNode from './CombinerNode'
 import PromptNode from './PromptNode'
-import ImageNode from './ImageNode'
 import { useState } from 'react'
-import { promiseSeries, promptsForNodes } from './utils'
+import PromptImage from '../../components/PromptImage'
 
 const nodeTypes = {
   prompt: PromptNode,
   combiner: CombinerNode,
-  image: ImageNode,
+  image: ({ data }) => {
+    return <PromptImage {...data} width={40} height={40} />
+  },
 }
 
 const AddPrompt = ({ setNodes }) => {
-  const [basePrompt, setBasePrompt] = useAtom(basePromptAtom)
-  const [seed] = useAtom(seedAtom)
   const [text, setText] = useState('')
 
   return (
@@ -43,27 +31,7 @@ const AddPrompt = ({ setNodes }) => {
       />
       <Button
         variant="light"
-        onClick={async () => {
-          const promptNode = newPromptNode(text)
-          setNodes((nodes) => [...nodes, promptNode])
-          const image = await api.getImage(
-            [`${text}${basePrompt ? ', ' + basePrompt : ''}`],
-            [1],
-            seed
-          )
-
-          setNodes((nodes) =>
-            nodes.map((node) => {
-              if (node.id === promptNode.id) {
-                node.data = {
-                  ...node.data,
-                  image,
-                }
-              }
-              return node
-            })
-          )
-        }}
+        onClick={() => setNodes((nodes) => [...nodes, newPromptNode(text)])}
       >
         Add prompt
       </Button>
@@ -71,14 +39,10 @@ const AddPrompt = ({ setNodes }) => {
   )
 }
 
-const StartButton = ({ nodes, setNodes }) => {
-  const [loading, setLoading] = useState(false)
+const StartButton = ({ setNodes }) => {
   return (
     <Button
-      onClick={async () => {
-        const prompts = promptsForNodes(nodes)
-        setLoading(true)
-
+      onClick={() => {
         setNodes((nodes) => [
           ...nodes.map((node) => {
             if (node.type === 'prompt') {
@@ -88,10 +52,9 @@ const StartButton = ({ nodes, setNodes }) => {
           }),
           newCombinerNode(),
         ])
-        setLoading(false)
       }}
     >
-      {loading ? 'Loading...' : 'Start'}
+      Start
     </Button>
   )
 }
@@ -119,7 +82,7 @@ const SeedInput = () => {
       value={seed}
       type="number"
       placeholder="empty for random"
-      onChange={(e) => setSeed(parseInt(e.target.value))}
+      onChange={(e) => setSeed(e.target.value)}
     />
   )
 }

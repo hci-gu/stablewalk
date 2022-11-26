@@ -54,7 +54,7 @@ export default function Combine() {
   const [{ basePrompt, seed, steps, from, to }, set] = useControls(() => ({
     basePrompt: 'photograph, 4k',
     seed: { value: 34, step: 1 },
-    steps: { value: 10, min: 1, max: 25, step: 1 },
+    steps: { value: 10, min: 1, max: 100, step: 1 },
     from: { value: 0, min: 0, max: 1, step: 0.001 },
     to: { value: 1, min: 0, max: 1, step: 0.001 },
   }))

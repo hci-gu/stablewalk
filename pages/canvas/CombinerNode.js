@@ -1,44 +1,28 @@
-import { Badge, Button, Flex, Image } from '@mantine/core'
+import { Badge, Button, Flex } from '@mantine/core'
 import { useReactFlow, useStoreApi } from 'reactflow'
 import 'reactflow/dist/style.css'
-import axios from 'axios'
-import { basePromptAtom, newImageNode, seedAtom } from './state'
-import { useAtom } from 'jotai'
+import { newImageNode } from './state'
 import { promptsForNodes, weightsForNodes } from './utils'
 import { IconArrowUpLeft } from '@tabler/icons'
-import * as api from './api'
 
 const GenerateButton = ({ nodeId, position }) => {
   const { setNodes } = useReactFlow()
-  const [seed] = useAtom(seedAtom)
-  const [basePrompt] = useAtom(basePromptAtom)
   const store = useStoreApi()
 
   const onGenerate = async () => {
-    const imageNode = newImageNode(null, {
-      x: position.x - 20,
-      y: position.y - 20,
-    })
-    setNodes((nodes) => [...nodes, imageNode])
-
     const { nodeInternals } = store.getState()
     const nodes = Array.from(nodeInternals.values())
 
     const weights = weightsForNodes(nodes, nodeId)
-    const prompts = promptsForNodes(nodes, basePrompt)
-    const image = await api.getImage(prompts, weights, seed)
+    const prompts = promptsForNodes(nodes)
 
-    setNodes((nodes) =>
-      nodes.map((node) => {
-        if (node.id === imageNode.id) {
-          node.data = {
-            ...node.data,
-            image,
-          }
-        }
-        return node
-      })
-    )
+    setNodes((nodes) => [
+      ...nodes,
+      newImageNode(prompts, weights, {
+        x: position.x - 20,
+        y: position.y - 20,
+      }),
+    ])
   }
 
   return <Button onClick={onGenerate}>Generate</Button>
