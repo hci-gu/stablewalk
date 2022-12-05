@@ -2,27 +2,55 @@
 import axios from 'axios'
 import fs from 'fs'
 import path from 'path'
+import sha1 from 'sha1'
 
 // path to image folder
 const imgPath = path.join(process.cwd(), 'public', 'images')
 
-const fileNameFor = (prompts, weights, seed) => {
+const fileNameFor = (prompts, weights, seed, neg_prompt, steps, cfg, v2) => {
   const promptString = prompts.join('-')
   const weightString = weights.join('-')
-  return `${promptString}-${weightString}-${seed}.png`
+
+  let name = `${promptString}-${weightString}-${neg_prompt}-${seed}-${steps}-${cfg}-${v2}`
+
+  if (name.length > 200) {
+    name = sha1(name)
+  }
+
+  return `${name}.png`
 }
 
 export default async function handler(req, res) {
-  const prompts = req.query.prompts?.split('|') || []
+  const basePrompt = req.query.basePrompt || null
+  const prompts =
+    req.query.prompts
+      ?.split('|')
+      .map((p) => `${p}${basePrompt ? `, ${basePrompt}` : ''}`) || []
   const weights = req.query.weights?.split(',').map((w) => parseFloat(w)) || []
+  const neg_prompt = req.query.negPrompt || ''
   const seed = parseInt(req.query.seed) || 0
+  const steps = parseInt(req.query.steps) || 20
+  const cfg = parseFloat(req.query.cfg) || 7.5
+  const v2 = req.query.v2 || true
 
-  const fileName = fileNameFor(prompts, weights, seed)
+  const fileName = fileNameFor(
+    prompts,
+    weights,
+    seed,
+    neg_prompt,
+    steps,
+    cfg,
+    v2
+  )
 
   const body = {
     prompts,
     weights,
     seed,
+    neg_prompt,
+    steps,
+    cfg,
+    v2,
   }
 
   // // check if image exists

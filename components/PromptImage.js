@@ -2,12 +2,12 @@ import { Image, LoadingOverlay } from '@mantine/core'
 import { useAtom } from 'jotai'
 import { useEffect, useState } from 'react'
 import { useGetImage } from '../src/api'
-import { basePromptAtom, seedAtom } from '../src/state'
+import { seedAtom, settingsAtom } from '../src/state'
 
 const PromptImage = ({ prompts, weights, width = 200, height = 200 }) => {
   const [toggled, setToggle] = useState(false)
   const [seed] = useAtom(seedAtom)
-  const [basePrompt] = useAtom(basePromptAtom)
+  const [settings] = useAtom(settingsAtom)
   const [loading, setLoading] = useState(false)
   const [image, setImage] = useState(null)
   const getImage = useGetImage()
@@ -15,13 +15,7 @@ const PromptImage = ({ prompts, weights, width = 200, height = 200 }) => {
   useEffect(() => {
     setLoading(true)
 
-    getImage(
-      prompts.map(
-        (prompt) => `${prompt}${basePrompt ? ', ' + basePrompt : ''}`
-      ),
-      weights,
-      seed
-    ).then((image) => {
+    getImage(prompts, weights, settings, seed).then((image) => {
       setImage(image)
       setLoading(false)
     })

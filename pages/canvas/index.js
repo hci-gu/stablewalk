@@ -1,8 +1,8 @@
 import ReactFlow, { Background, Controls, useNodesState } from 'reactflow'
 import 'reactflow/dist/style.css'
 import { initialNodes, newCombinerNode, newPromptNode } from './state'
-import { seedAtom, basePromptAtom } from '../../src/state'
-import { Button, Flex, TextInput } from '@mantine/core'
+import { seedAtom, basePromptAtom, settingsAtom } from '../../src/state'
+import { Button, Checkbox, Flex, TextInput } from '@mantine/core'
 import { useAtom } from 'jotai'
 
 import CombinerNode from './CombinerNode'
@@ -60,14 +60,25 @@ const StartButton = ({ setNodes }) => {
 }
 
 const BasePromptInput = () => {
-  const [value, setValue] = useAtom(basePromptAtom)
+  const [{ basePrompt }, set] = useAtom(settingsAtom)
   return (
     <TextInput
       label="Prompt flair"
-      value={value}
-      onChange={(e) => setValue(e.target.value)}
+      value={basePrompt}
+      onChange={(e) => set({ basePrompt: e.target.value })}
+      placeholder="example: poorly drawn hands"
+    />
+  )
+}
+
+const NegPromptInput = () => {
+  const [{ negPrompt }, set] = useAtom(settingsAtom)
+  return (
+    <TextInput
+      label="Negative prompt"
+      value={negPrompt}
+      onChange={(e) => set({ negPrompt: e.target.value })}
       placeholder="example: photograph, headshot, 4k"
-      w="40%"
     />
   )
 }
@@ -87,6 +98,46 @@ const SeedInput = () => {
   )
 }
 
+const V2Checkbox = () => {
+  const [{ v2 }, set] = useAtom(settingsAtom)
+
+  return (
+    <Checkbox
+      label="v2"
+      checked={v2}
+      onChange={(e) => set({ v2: e.target.checked })}
+    />
+  )
+}
+
+const CFGInput = () => {
+  const [{ cfg }, set] = useAtom(settingsAtom)
+
+  return (
+    <TextInput
+      w={64}
+      label="cfg"
+      value={cfg}
+      type="number"
+      onChange={(e) => set({ cfg: e.target.value })}
+    />
+  )
+}
+
+const StepsInput = () => {
+  const [{ steps }, set] = useAtom(settingsAtom)
+
+  return (
+    <TextInput
+      w={64}
+      label="steps"
+      value={steps}
+      type="number"
+      onChange={(e) => set({ steps: e.target.value })}
+    />
+  )
+}
+
 export default function Canvas() {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes)
 
@@ -94,8 +145,20 @@ export default function Canvas() {
     <>
       <Flex gap="md" align="end">
         <AddPrompt setNodes={setNodes} />
-        <BasePromptInput />
-        <SeedInput />
+        <Flex direction="column" w="40%">
+          <BasePromptInput />
+          <NegPromptInput />
+        </Flex>
+        <Flex direction="column">
+          <Flex align="end" gap="md">
+            <CFGInput />
+            <StepsInput />
+          </Flex>
+          <Flex align="end" gap="md">
+            <SeedInput />
+            <V2Checkbox />
+          </Flex>
+        </Flex>
         <StartButton nodes={nodes} setNodes={setNodes} />
       </Flex>
       <div

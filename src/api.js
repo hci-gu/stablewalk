@@ -4,10 +4,19 @@ import PQueue from 'p-queue'
 import { useEffect, useMemo, useRef } from 'react'
 import { seedAtom } from './state'
 
-const queryString = ({ prompts, weights, seed }) => {
+const queryString = ({
+  prompts,
+  basePrompt,
+  negPrompt,
+  steps,
+  cfg,
+  v2,
+  weights,
+  seed,
+}) => {
   return `?prompts=${prompts.join('|')}&weights=${weights.join(
     ','
-  )}&seed=${seed}`
+  )}&seed=${seed}&basePrompt=${basePrompt}&negPrompt=${negPrompt}&steps=${steps}&cfg=${cfg}&v2=${v2}`
 }
 
 const queue = new PQueue({ concurrency: 1 })
@@ -35,9 +44,23 @@ function useDidUpdateEffect(fn, inputs) {
   }, inputs)
 }
 
-const getImage = async (prompts, weights, seed) => {
-  console.log('getImage', prompts, weights, seed)
-  const query = queryString({ prompts, weights, seed })
+const getImage = async (
+  prompts,
+  weights,
+  { basePrompt, negPrompt, steps, cfg, v2 },
+  seed
+) => {
+  const query = queryString({
+    prompts,
+    weights,
+    seed,
+    basePrompt,
+    negPrompt,
+    steps,
+    cfg,
+    v2,
+  })
+  console.log(query)
 
   if (cache[query]) {
     return cache[query]
