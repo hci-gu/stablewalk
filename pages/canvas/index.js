@@ -40,21 +40,29 @@ const AddPrompt = ({ setNodes }) => {
 }
 
 const StartButton = ({ setNodes }) => {
+  const [started, setStarted] = useState(true)
+
   return (
     <Button
+      color={started ? 'red' : 'blue'}
       onClick={() => {
-        setNodes((nodes) => [
-          ...nodes.map((node) => {
-            if (node.type === 'prompt') {
-              node.draggable = false
-            }
-            return node
-          }),
-          newCombinerNode(),
-        ])
+        if (!started) {
+          setNodes((nodes) => [
+            ...nodes.map((node) => {
+              if (node.type === 'prompt') {
+                node.draggable = false
+              }
+              return node
+            }),
+            newCombinerNode(),
+          ])
+        } else {
+          setNodes(initialNodes)
+        }
+        setStarted(!started)
       }}
     >
-      Start
+      {started ? 'Restart' : 'Start'}
     </Button>
   )
 }
@@ -93,7 +101,7 @@ const SeedInput = () => {
       value={seed}
       type="number"
       placeholder="empty for random"
-      onChange={(e) => setSeed(e.target.value)}
+      onChange={(e) => setSeed(parseInt(e.target.value))}
     />
   )
 }
@@ -119,7 +127,7 @@ const CFGInput = () => {
       label="cfg"
       value={cfg}
       type="number"
-      onChange={(e) => set({ cfg: e.target.value })}
+      onChange={(e) => set({ cfg: parseFloat(e.target.value) })}
     />
   )
 }
@@ -133,7 +141,7 @@ const StepsInput = () => {
       label="steps"
       value={steps}
       type="number"
-      onChange={(e) => set({ steps: e.target.value })}
+      onChange={(e) => set({ steps: parseInt(e.target.value) })}
     />
   )
 }
@@ -173,7 +181,7 @@ export default function Canvas() {
           onNodesChange={onNodesChange}
           nodeTypes={nodeTypes}
           fitView
-          minZoom={0.1}
+          minZoom={0.01}
           maxZoom={20}
         >
           <Background />

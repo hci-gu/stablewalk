@@ -8,12 +8,10 @@ const PromptNode = ({ id, data }) => {
   const store = useStoreApi()
 
   const onDelete = () => {
-    console.log('onDelete')
     const { nodeInternals } = store.getState()
     const nodes = Array.from(nodeInternals.values())
 
     const newNodes = nodes.filter((n) => n.id !== id)
-    console.log(id, nodes, newNodes)
     setNodes(newNodes)
   }
 

@@ -4,7 +4,8 @@ export const weightsForNodes = (nodes, combinerId) => {
   const combinerPos = nodes.find((n) => n.id === combinerId).position
 
   const distances = positions.map(
-    ([x, y]) => 1 / Math.hypot(combinerPos.x - x, combinerPos.y - y)
+    ([x, y]) =>
+      1 / Math.hypot(combinerPos.x - (x + 100), combinerPos.y - (y + 100))
   )
 
   const totalDistance = distances.reduce((a, b) => a + b, 0)
