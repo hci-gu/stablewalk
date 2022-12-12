@@ -21,18 +21,11 @@ const fileNameFor = (prompts, weights, seed, neg_prompt, steps, cfg, v2) => {
 }
 
 export default async function handler(req, res) {
-  const basePrompt = req.query.basePrompt || null
+  const { weights, seed, basePrompt, neg_prompt, steps, cfg, v2 } = req.body
   const prompts =
-    req.query.prompts
-      ?.split('|')
-      .map((p) => `${p}${basePrompt ? `, ${basePrompt}` : ''}`) || []
-  const weights = req.query.weights?.split(',').map((w) => parseFloat(w)) || []
-  const neg_prompt = req.query.negPrompt || ''
-  const seed = parseInt(req.query.seed) || 0
-  const steps = parseInt(req.query.steps) || 20
-  const cfg = parseFloat(req.query.cfg) || 7.5
-  const v2 = req.query.v2 || true
-
+    req.body.prompts?.map(
+      (p) => `${p}${basePrompt ? `, ${basePrompt}` : ''}`
+    ) || []
   const fileName = fileNameFor(
     prompts,
     weights,

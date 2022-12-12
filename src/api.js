@@ -4,21 +4,6 @@ import PQueue from 'p-queue'
 import { useEffect, useMemo, useRef } from 'react'
 import { seedAtom } from './state'
 
-const queryString = ({
-  prompts,
-  basePrompt,
-  negPrompt,
-  steps,
-  cfg,
-  v2,
-  weights,
-  seed,
-}) => {
-  return `?prompts=${prompts.join('|')}&weights=${weights.join(
-    ','
-  )}&seed=${seed}&basePrompt=${basePrompt}&negPrompt=${negPrompt}&steps=${steps}&cfg=${cfg}&v2=${v2}`
-}
-
 const queue = new PQueue({ concurrency: 1 })
 const cache = {}
 
@@ -50,7 +35,7 @@ const getImage = async (
   { basePrompt, negPrompt, steps, cfg, v2 },
   seed
 ) => {
-  const query = queryString({
+  const body = {
     prompts,
     weights,
     seed,
@@ -59,16 +44,16 @@ const getImage = async (
     steps,
     cfg,
     v2,
-  })
-  console.log(query)
-
-  if (cache[query]) {
-    return cache[query]
   }
 
-  const response = await queue.add(() => axios.get(`/api/image${query}`))
+  const stringified = JSON.stringify(body)
+  if (cache[stringified]) {
+    return cache[stringified]
+  }
 
-  cache[query] = response.data
+  const response = await queue.add(() => axios.post(`/api/image`, body))
+
+  cache[stringified] = response.data
 
   return response.data
 }
@@ -78,7 +63,6 @@ export const useGetImage = () => {
   const debouncedGetImage = useMemo(() => debounce(getImage, 500), [])
 
   useDidUpdateEffect(() => {
-    console.log('CLEAR QUEUE')
     queue.clear()
   }, [seed])
 
