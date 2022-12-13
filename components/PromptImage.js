@@ -1,4 +1,4 @@
-import { Image, LoadingOverlay } from '@mantine/core'
+import { Flex, Image, LoadingOverlay, Text } from '@mantine/core'
 import { useAtom } from 'jotai'
 import { useEffect, useState } from 'react'
 import { useGetImage } from '../src/api'
@@ -35,6 +35,28 @@ const PromptImage = ({ prompts, weights, width = 200, height = 200 }) => {
           marginTop: toggled ? -256 : 0,
         }}
       />
+      {toggled && (
+        <Flex
+          w={512}
+          bg="rgba(0,0,0,0.8)"
+          p={4}
+          style={{
+            position: 'absolute',
+            left: -256,
+            bottom: -512,
+            zIndex: 100,
+            color: 'white',
+            borderRadius: 4,
+          }}
+        >
+          <Text>
+            {prompts
+              .map((p, i) => `${p} (${weights[i].toFixed(3)})`)
+              .join('\n')}
+            {`, seed: ${seed}, cfg: ${settings.cfg}, steps: ${settings.steps}`}
+          </Text>
+        </Flex>
+      )}
       <LoadingOverlay
         visible={loading}
         w="100%"
