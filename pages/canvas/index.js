@@ -40,7 +40,7 @@ const AddPrompt = ({ setNodes }) => {
 }
 
 const StartButton = ({ setNodes }) => {
-  const [started, setStarted] = useState(true)
+  const [started, setStarted] = useState(false)
 
   return (
     <Button
