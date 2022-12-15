@@ -9,8 +9,8 @@ const getInitialGrid = (size) => {
     grid.push([])
     for (let j = 0; j < size; j++) {
       grid[i].push({
-        cfg: 4 + (j * 16) / size,
-        steps: size + i * (size / 2),
+        cfg: 4 + (j * 16) / (size - 1),
+        steps: parseInt(4 + i * 96 / (size - 1)),
         image: undefined,
       })
     }
@@ -28,8 +28,10 @@ const useGrid = (size) => {
     setGrid(getInitialGrid(size))
   }, [size])
 
+  console.log({ cfg, prompt })
+
   const addImage = useCallback(
-    (i, j, prompt) => {
+    (i, j) => {
       const newGrid = [...grid]
       const item = newGrid[i][j]
       item.image = `http://leviathan.itit.gu.se:5000/img/${prompt}?cfg=${item.cfg}&steps=${item.steps}&seed=214`
@@ -55,7 +57,7 @@ export default function Home() {
             <GridItem
               item={item}
               key={`Item_${i}-${j}`}
-              onClick={() => getImage(i, j, prompt)}
+              onClick={() => getImage(i, j)}
             />
           ))
         )}

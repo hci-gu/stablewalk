@@ -27,12 +27,6 @@ const convert = (p1, p2, sliderValue, basePrompt, seed) => {
     seed,
   }
 }
-
-const queryString = ({ prompts, weights, seed }) => {
-  return `?prompts=${prompts.join('|')}&weights=${weights.join(
-    ','
-  )}&seed=${seed}`
-}
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
 const valueFor = (from, to, i, steps) => from + (to - from) * (i / steps)
@@ -69,9 +63,8 @@ export default function Combine() {
     for (let i = 0; i <= steps; i++) {
       const value = valueFor(from, to, i, steps)
       const body = convert(prompt1, prompt2, value, basePrompt, seed)
-      const query = queryString(body)
       await wait(100)
-      const response = await axios.get(`/api/image${query}`)
+      const response = await axios.post(`/api/image`, body)
       setImages((images) => [
         ...images,
         {
@@ -88,9 +81,8 @@ export default function Combine() {
       const image = images[i]
       if (!image.url) {
         const body = convert(prompt1, prompt2, image.value, basePrompt, seed)
-        const query = queryString(body)
         await wait(100)
-        const response = await axios.get(`/api/image${query}`)
+        const response = await axios.post(`/api/image`, body)
         image.url = response.data
         setImages((images) => [...images])
       }

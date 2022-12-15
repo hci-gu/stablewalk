@@ -15,3 +15,5 @@ export const settingsAtom = atom(
     set(settingsAtom, { ...get(settingsAtom), ...update })
   }
 )
+
+export const startedAtom = atom(false)
