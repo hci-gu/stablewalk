@@ -28,10 +28,19 @@ export const newCombinerNode = () => {
       label: 'combiner ' + id,
     },
     position: { x: 100, y: 100 },
+    style: {
+      pointerEvents: 'none',
+      cursor: 'default',
+    },
   }
 }
 
-export const newImageNode = (prompts, weights, position) => {
+export const newImageNode = (
+  prompts,
+  weights,
+  position,
+  size = { width: 40, height: 40 }
+) => {
   const id = getId()
   return {
     id,
@@ -40,9 +49,11 @@ export const newImageNode = (prompts, weights, position) => {
       label: 'image ' + id,
       prompts,
       weights,
+      ...size,
     },
     position,
+    selectable: false,
   }
 }
 
-export const initialNodes = []
+export const initialNodes = [newCombinerNode()]

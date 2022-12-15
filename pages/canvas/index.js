@@ -1,61 +1,65 @@
 import ReactFlow, { Background, Controls, useNodesState } from 'reactflow'
 import 'reactflow/dist/style.css'
 import { initialNodes, newCombinerNode, newPromptNode } from './state'
-import { seedAtom, basePromptAtom, settingsAtom } from '../../src/state'
+import { seedAtom, settingsAtom, startedAtom } from '../../src/state'
 import { Button, Checkbox, Flex, TextInput } from '@mantine/core'
-import { useAtom } from 'jotai'
+import { useAtom, useAtomValue } from 'jotai'
 
 import CombinerNode from './CombinerNode'
 import PromptNode from './PromptNode'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import PromptImage from '../../components/PromptImage'
+import {
+  addImageNodeForPosition,
+  makeUpdatesForChange,
+  moveCombinerNode,
+  updateNodesForZoom,
+} from './utils'
 
 const nodeTypes = {
   prompt: PromptNode,
   combiner: CombinerNode,
   image: ({ data }) => {
-    return <PromptImage {...data} width={40} height={40} />
+    return <PromptImage {...data} />
   },
 }
 
 const AddPrompt = ({ setNodes }) => {
   const [text, setText] = useState('')
+  const started = useAtomValue(startedAtom)
+
+  const onSubmit = (e) => {
+    e.preventDefault()
+    setNodes((nodes) => [...nodes, newPromptNode(text)])
+  }
 
   return (
-    <Flex direction="column" gap="xs">
-      <TextInput
-        w={250}
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        placeholder="Prompt"
-      />
-      <Button
-        variant="light"
-        onClick={() => setNodes((nodes) => [...nodes, newPromptNode(text)])}
-      >
-        Add prompt
-      </Button>
-    </Flex>
+    <form onSubmit={onSubmit}>
+      <Flex direction="column" gap="xs">
+        <TextInput
+          w={250}
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          placeholder="Prompt"
+          disabled={started}
+        />
+        <Button variant="light" onClick={onSubmit} disabled={started}>
+          Add prompt
+        </Button>
+      </Flex>
+    </form>
   )
 }
 
 const StartButton = ({ setNodes }) => {
-  const [started, setStarted] = useState(false)
+  const [started, setStarted] = useAtom(startedAtom)
 
   return (
     <Button
       color={started ? 'red' : 'blue'}
       onClick={() => {
         if (!started) {
-          setNodes((nodes) => [
-            ...nodes.map((node) => {
-              if (node.type === 'prompt') {
-                node.draggable = false
-              }
-              return node
-            }),
-            newCombinerNode(),
-          ])
+          setNodes((nodes) => [...nodes, newCombinerNode()])
         } else {
           setNodes(initialNodes)
         }
@@ -147,6 +151,8 @@ const StepsInput = () => {
 }
 
 export default function Canvas() {
+  const ref = useRef()
+  const [instance, setInstance] = useState(null)
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes)
 
   return (
@@ -177,9 +183,38 @@ export default function Canvas() {
         }}
       >
         <ReactFlow
+          ref={ref}
           nodes={nodes}
-          onNodesChange={onNodesChange}
+          onInit={(instance) => setInstance(instance)}
+          onNodesChange={(changes) => {
+            onNodesChange(changes)
+            setNodes((n) => makeUpdatesForChange(changes, n))
+          }}
           nodeTypes={nodeTypes}
+          onMove={(e, { zoom }) => {
+            setNodes((n) => updateNodesForZoom(n, zoom))
+          }}
+          onPaneClick={({ clientX, clientY }) => {
+            if (!instance || !ref.current) return
+            const bounds = ref.current.getBoundingClientRect()
+            const position = instance.project({
+              x: clientX - bounds.left,
+              y: clientY - bounds.top,
+            })
+            setNodes((n) =>
+              addImageNodeForPosition(n, position, instance.getZoom())
+            )
+          }}
+          onPaneMouseMove={({ clientX, clientY }) => {
+            if (!instance || !ref.current) return
+            const bounds = ref.current.getBoundingClientRect()
+            const position = instance.project({
+              x: clientX - bounds.left,
+              y: clientY - bounds.top,
+            })
+            setNodes((n) => moveCombinerNode(n, position))
+          }}
+          nodeOrigin={[0.5, 0.5]}
           fitView
           minZoom={0.01}
           maxZoom={20}

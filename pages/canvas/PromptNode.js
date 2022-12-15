@@ -1,9 +1,9 @@
-import { ActionIcon, Badge, Card, Flex } from '@mantine/core'
+import { ActionIcon, Badge, Card, Flex, Text } from '@mantine/core'
 import { IconX } from '@tabler/icons'
 import { useReactFlow, useStoreApi } from 'reactflow'
 import PromptImage from '../../components/PromptImage'
 
-const PromptNode = ({ id, data }) => {
+const PromptNode = ({ id, xPos, yPos, data }) => {
   const { setNodes } = useReactFlow()
   const store = useStoreApi()
 
@@ -23,7 +23,7 @@ const PromptNode = ({ id, data }) => {
       withBorder
       style={{ overflow: 'visible' }}
     >
-      <ActionIcon
+      {/* <ActionIcon
         style={{ position: 'absolute', left: -8, top: -8 }}
         size="xs"
         variant="filled"
@@ -32,7 +32,7 @@ const PromptNode = ({ id, data }) => {
         onClick={() => onDelete()}
       >
         <IconX />
-      </ActionIcon>
+      </ActionIcon> */}
       <Flex direction="column" gap="xs">
         <Badge style={{ background: data.color, color: 'black' }} maw={200}>
           {data.prompts[0]}

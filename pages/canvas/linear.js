@@ -1,57 +1,57 @@
 function sub(x, y) {
-  var r = [];
+  var r = []
   for (var i = 0; i < x.length; i++) {
-    r.push(x[i] - y[i]);
+    r.push(x[i] - y[i])
   }
-  return r;
+  return r
 }
 
 function add(xs) {
-  var r = xs[0];
+  var r = xs[0]
   for (var i = 1; i < xs.length; i++) {
     for (var j = 0; j < xs[i].length; j++) {
-      r[j] += xs[i][j];
+      r[j] += xs[i][j]
     }
   }
-  return r;
+  return r
 }
 
 function sum(xs) {
-  var r = 0;
+  var r = 0
   for (var i = 0; i < xs.length; i++) {
-    r += xs[i];
+    r += xs[i]
   }
-  return r;
+  return r
 }
 
 function sqr(x) {
-  var r = [];
+  var r = []
   for (var i = 0; i < x.length; i++) {
-    r.push(Math.pow(x[i], 2));
+    r.push(Math.pow(x[i], 2))
   }
-  return r;
+  return r
 }
 
 function mul(x, s) {
   // if s is scalar
   if (typeof s === 'number') {
-    var r = [];
+    var r = []
     for (var i = 0; i < x.length; i++) {
-      r.push(x[i] * s);
+      r.push(x[i] * s)
     }
-    return r;
+    return r
   }
   // if s is vector, row by column
   else {
-    var r = [];
+    var r = []
     for (var i = 0; i < x.length; i++) {
-      var sum = 0;
+      var sum = 0
       for (var j = 0; j < s.length; j++) {
-        sum += x[i][j] * s[j];
+        sum += x[i][j] * s[j]
       }
-      r.push(sum);
+      r.push(sum)
     }
-    return r;
+    return r
   }
 }
 
@@ -64,13 +64,13 @@ function distance2(x, y) {
 }
 
 function totalDistance2BetweenAllPoints(xs) {
-  var r = 0;
+  var r = 0
   for (var i = 0; i < xs.length; i++) {
     for (var j = i + 1; j < xs.length; j++) {
-      r += distance2(xs[i], xs[j]);
+      r += distance2(xs[i], xs[j])
     }
   }
-  return r;
+  return r
 }
 
 function ones(length) {
@@ -78,37 +78,25 @@ function ones(length) {
 }
 
 function calculateLinearCombination(points, target) {
-  let a = mul(ones(points.length), 1 / points.length);
+  let a = mul(ones(points.length), 1 / points.length)
+  const maxValue = Math.max(
+    ...[...points.flat(), ...target].map((x) => Math.abs(x))
+  )
+  const scaledPoints = points.map((point) => mul(point, 1 / maxValue))
+  const scaledTarget = mul(target, 1 / maxValue)
 
-  // const p0 = points[0] // mul(add(points), 1 / points.length)
-  // points = points.map(p => sub(p, p0))
-  // target = sub(target, p0)
-
-  // rescale points and target by largest distance
-  const maxValue = Math.max(...[...points.flat(), ...target].map(x => Math.abs(x)));
-  const scaledPoints = points.map(point => mul(point, 1 / maxValue));
-  const scaledTarget = mul(target, 1 / maxValue);
-
-  const breakCriteria = totalDistance2BetweenAllPoints(scaledPoints) / 1000
-
-  for (let i = 0; i<100; i++) {
-    var y_ = add(muls(scaledPoints, a));
-    var L = sum(sqr(sub(scaledTarget, y_))) + (1 - sum(a)) * (1 - sum(a));
-    var dLdy = mul(sub(scaledTarget, y_), -2);
-    var dLda = mul(scaledPoints, dLdy) - mul(ones(a.length), 2 * (1 - sum(a)));
-    a = sub(a, mul(dLda, 0.1));
-    if (L < breakCriteria) {
-      console.log({ i, a, points, target })
-
-      break;
-    }
+  for (let i = 0; i < 500; i++) {
+    var y_ = add(muls(scaledPoints, a))
+    var dLdy = mul(sub(scaledTarget, y_), -2)
+    var dLda = sub(
+      mul(scaledPoints, dLdy),
+      mul(ones(a.length), 2 * (1 - sum(a)))
+    )
+    a = sub(a, mul(dLda, 0.1))
   }
 
-  console.log('done')
-
-  return mul(a, 1/sum(a))
+  a = a.map((x) => Math.max(0, x))
+  return mul(a, 1 / sum(a))
 }
 
-export {
-  calculateLinearCombination,
-}
+export { calculateLinearCombination }

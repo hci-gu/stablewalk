@@ -27,7 +27,7 @@ const PromptImage = ({ prompts, weights, width = 200, height = 200 }) => {
         src={image}
         width={toggled ? 512 : width}
         height={toggled ? 512 : height}
-        radius="sm"
+        radius={width / 8}
         onClick={() => setToggle(!toggled)}
         style={{
           cursor: 'pointer',
@@ -41,7 +41,7 @@ const PromptImage = ({ prompts, weights, width = 200, height = 200 }) => {
         h="100%"
         overlayColor={image ? 'rgba(0, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.5)'}
         loaderProps={{
-          size: width < 100 ? 'xs' : 'sm',
+          size: width / 3,
           color: 'pink',
           variant: 'bars',
         }}
