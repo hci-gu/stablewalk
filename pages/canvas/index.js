@@ -15,6 +15,7 @@ import {
   moveCombinerNode,
   updateNodesForZoom,
 } from './utils'
+import ImageModal from '../../components/ImageModal'
 
 const nodeTypes = {
   prompt: PromptNode,
@@ -157,6 +158,7 @@ export default function Canvas() {
 
   return (
     <>
+      <ImageModal />
       <Flex gap="md" align="end">
         <AddPrompt setNodes={setNodes} />
         <Flex direction="column" w="40%">

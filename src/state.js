@@ -17,3 +17,5 @@ export const settingsAtom = atom(
 )
 
 export const startedAtom = atom(false)
+
+export const modalImageAtom = atom(null)

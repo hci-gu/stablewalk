@@ -2,10 +2,10 @@ import { Flex, Image, LoadingOverlay, Text } from '@mantine/core'
 import { useAtom } from 'jotai'
 import { useEffect, useState } from 'react'
 import { useGetImage } from '../src/api'
-import { seedAtom, settingsAtom } from '../src/state'
+import { modalImageAtom, seedAtom, settingsAtom } from '../src/state'
 
 const PromptImage = ({ prompts, weights, width = 200, height = 200 }) => {
-  const [toggled, setToggle] = useState(false)
+  const [, setModalImage] = useAtom(modalImageAtom)
   const [seed] = useAtom(seedAtom)
   const [settings] = useAtom(settingsAtom)
   const [loading, setLoading] = useState(false)
@@ -25,38 +25,20 @@ const PromptImage = ({ prompts, weights, width = 200, height = 200 }) => {
     <div style={{ width, height, position: 'relative' }}>
       <Image
         src={image}
-        width={toggled ? 512 : width}
-        height={toggled ? 512 : height}
+        width={width}
+        height={height}
         radius={width / 8}
-        onClick={() => setToggle(!toggled)}
+        onClick={() =>
+          setModalImage({
+            prompts,
+            weights,
+            image,
+          })
+        }
         style={{
           cursor: 'pointer',
-          marginLeft: toggled ? -256 : 0,
-          marginTop: toggled ? -256 : 0,
         }}
       />
-      {toggled && (
-        <Flex
-          w={512}
-          bg="rgba(0,0,0,0.8)"
-          p={4}
-          style={{
-            position: 'absolute',
-            left: -256,
-            bottom: -512,
-            zIndex: 100,
-            color: 'white',
-            borderRadius: 4,
-          }}
-        >
-          <Text>
-            {prompts
-              .map((p, i) => `${p} (${weights[i].toFixed(3)})`)
-              .join('\n')}
-            {`, seed: ${seed}, cfg: ${settings.cfg}, steps: ${settings.steps}`}
-          </Text>
-        </Flex>
-      )}
       <LoadingOverlay
         visible={loading}
         w="100%"
