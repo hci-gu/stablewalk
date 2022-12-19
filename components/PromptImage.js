@@ -27,7 +27,7 @@ const PromptImage = ({ prompts, weights, width = 200, height = 200 }) => {
         src={image}
         width={width}
         height={height}
-        radius={width / 8}
+        radius={typeof width == 'number' ? width / 8 : 'md'}
         onClick={() =>
           setModalImage({
             prompts,

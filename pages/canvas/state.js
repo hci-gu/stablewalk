@@ -56,4 +56,15 @@ export const newImageNode = (
   }
 }
 
-export const initialNodes = [newCombinerNode()]
+export const initialNodes = () => [newCombinerNode()]
+
+const flowKey = 'flow'
+export const saveFlowState = (instance) => {
+  const flow = instance.toObject()
+  localStorage.setItem(flowKey, JSON.stringify(flow))
+}
+
+export const loadFlowState = () => {
+  const flow = localStorage.getItem(flowKey)
+  return flow ? JSON.parse(flow) : null
+}

@@ -19,3 +19,11 @@ export const settingsAtom = atom(
 export const startedAtom = atom(false)
 
 export const modalImageAtom = atom(null)
+
+export const sequenceAtom = atom({
+  editing: false,
+  from: null,
+  to: null,
+  steps: 10,
+  images: [],
+})

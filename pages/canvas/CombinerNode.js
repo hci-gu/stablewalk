@@ -4,7 +4,6 @@ import 'reactflow/dist/style.css'
 import { weightsForNodes } from './utils'
 
 const CombinerNode = ({ xPos, yPos, ...props }) => {
-  console.log(props)
   const instance = useReactFlow()
   const store = useStoreApi()
   const { nodeInternals } = store.getState()

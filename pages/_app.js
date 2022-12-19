@@ -2,16 +2,28 @@ import '../styles/globals.css'
 import Head from 'next/head'
 import {
   ActionIcon,
+  AppShell,
   ColorSchemeProvider,
   Container,
+  Divider,
+  Flex,
+  Header,
   MantineProvider,
   Tabs,
   useMantineColorScheme,
 } from '@mantine/core'
 import { useControls } from 'leva'
 import { useRouter } from 'next/router'
-import { IconMoonStars, IconSun } from '@tabler/icons'
+import {
+  IconLayoutNavbarCollapse,
+  IconLayoutNavbarExpand,
+  IconMoonStars,
+  IconSettings,
+  IconSun,
+} from '@tabler/icons'
 import { useState } from 'react'
+import PromptSettings from '../components/PromptsSettings'
+import { ReactFlowProvider } from 'reactflow'
 
 const DarkMode = () => {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme()
@@ -29,27 +41,65 @@ const DarkMode = () => {
   )
 }
 
-const Layout = ({ children }) => {
+const ToggleHeaderButton = ({ onClick, visible }) => {
+  return (
+    <ActionIcon
+      variant="outline"
+      onClick={onClick}
+      color={'blue'}
+      title="toggle header settings"
+    >
+      {visible ? (
+        <IconLayoutNavbarCollapse size={18} />
+      ) : (
+        <IconLayoutNavbarExpand size={18} />
+      )}
+    </ActionIcon>
+  )
+}
+
+const Layout = ({ children, pageHeader }) => {
   const router = useRouter()
+  const [visible, setVisible] = useState(true)
 
   return (
-    <>
-      <Tabs
-        value={router.pathname}
-        onTabChange={(value) => router.push(value)}
-        pos="relative"
-      >
-        <Tabs.List p={4}>
-          <Tabs.Tab value="/">Grid</Tabs.Tab>
-          <Tabs.Tab value="/combine">Combine</Tabs.Tab>
-          <Tabs.Tab value="/canvas">Canvas</Tabs.Tab>
-          <Container pos="absolute" right={0} mt={4}>
-            <DarkMode />
-          </Container>
-        </Tabs.List>
-      </Tabs>
-      <div style={{ margin: '32px auto', width: '95%' }}>{children}</div>
-    </>
+    <AppShell
+      header={
+        <Header>
+          <Tabs
+            value={router.pathname}
+            onTabChange={(value) => router.push(value)}
+            pos="relative"
+          >
+            <Tabs.List p={4}>
+              <Tabs.Tab value="/">Grid</Tabs.Tab>
+              <Tabs.Tab value="/combine">Combine</Tabs.Tab>
+              <Tabs.Tab value="/canvas">Canvas</Tabs.Tab>
+              <Container pos="absolute" right={0} mt={4}>
+                <DarkMode />
+              </Container>
+              <Container pos="absolute" right={40} mt={4}>
+                <ToggleHeaderButton
+                  onClick={() => setVisible(!visible)}
+                  visible={visible}
+                />
+              </Container>
+            </Tabs.List>
+            {visible && (
+              <Flex p="md" align="center" gap="md">
+                <PromptSettings />
+                <Divider orientation="vertical" />
+                {pageHeader}
+              </Flex>
+            )}
+          </Tabs>
+        </Header>
+      }
+    >
+      <Container pt={visible ? 225 : 60} h="100%" fluid>
+        {children}
+      </Container>
+    </AppShell>
   )
 }
 
@@ -75,9 +125,11 @@ function MyApp({ Component, pageProps }) {
           withGlobalStyles
           withNormalizeCSS
         >
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
+          <ReactFlowProvider>
+            <Layout pageHeader={Component.Header && <Component.Header />}>
+              <Component {...pageProps} />
+            </Layout>
+          </ReactFlowProvider>
         </MantineProvider>
       </ColorSchemeProvider>
     </>

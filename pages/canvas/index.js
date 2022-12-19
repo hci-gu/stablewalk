@@ -1,13 +1,24 @@
-import ReactFlow, { Background, Controls, useNodesState } from 'reactflow'
+import ReactFlow, {
+  Background,
+  Controls,
+  ReactFlowProvider,
+  useNodesState,
+  useReactFlow,
+} from 'reactflow'
 import 'reactflow/dist/style.css'
-import { initialNodes, newCombinerNode, newPromptNode } from './state'
-import { seedAtom, settingsAtom, startedAtom } from '../../src/state'
-import { Button, Checkbox, Flex, TextInput } from '@mantine/core'
-import { useAtom, useAtomValue } from 'jotai'
+import {
+  initialNodes,
+  loadFlowState,
+  newPromptNode,
+  saveFlowState,
+} from './state'
+import { startedAtom } from '../../src/state'
+import { Button, Flex, TextInput } from '@mantine/core'
+import { useAtomValue } from 'jotai'
 
 import CombinerNode from './CombinerNode'
 import PromptNode from './PromptNode'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import PromptImage from '../../components/PromptImage'
 import {
   addImageNodeForPosition,
@@ -16,6 +27,7 @@ import {
   updateNodesForZoom,
 } from './utils'
 import ImageModal from '../../components/ImageModal'
+import { IconEraser } from '@tabler/icons'
 
 const nodeTypes = {
   prompt: PromptNode,
@@ -25,13 +37,15 @@ const nodeTypes = {
   },
 }
 
-const AddPrompt = ({ setNodes }) => {
+const AddPrompt = () => {
+  const instance = useReactFlow()
   const [text, setText] = useState('')
   const started = useAtomValue(startedAtom)
 
   const onSubmit = (e) => {
     e.preventDefault()
-    setNodes((nodes) => [...nodes, newPromptNode(text)])
+    instance.setNodes((nodes) => [...nodes, newPromptNode(text)])
+    setTimeout(() => saveFlowState(instance), 100)
   }
 
   return (
@@ -52,136 +66,42 @@ const AddPrompt = ({ setNodes }) => {
   )
 }
 
-const StartButton = ({ setNodes }) => {
-  const [started, setStarted] = useAtom(startedAtom)
+export const ClearButton = () => {
+  const instance = useReactFlow()
 
   return (
     <Button
-      color={started ? 'red' : 'blue'}
+      leftIcon={<IconEraser />}
+      color="red"
       onClick={() => {
-        if (!started) {
-          setNodes((nodes) => [...nodes, newCombinerNode()])
-        } else {
-          setNodes(initialNodes)
-        }
-        setStarted(!started)
+        instance.setNodes(initialNodes())
+        setTimeout(() => saveFlowState(instance), 100)
       }}
     >
-      {started ? 'Restart' : 'Start'}
+      Clear
     </Button>
-  )
-}
-
-const BasePromptInput = () => {
-  const [{ basePrompt }, set] = useAtom(settingsAtom)
-  return (
-    <TextInput
-      label="Prompt flair"
-      value={basePrompt}
-      onChange={(e) => set({ basePrompt: e.target.value })}
-      placeholder="example: poorly drawn hands"
-    />
-  )
-}
-
-const NegPromptInput = () => {
-  const [{ negPrompt }, set] = useAtom(settingsAtom)
-  return (
-    <TextInput
-      label="Negative prompt"
-      value={negPrompt}
-      onChange={(e) => set({ negPrompt: e.target.value })}
-      placeholder="example: photograph, headshot, 4k"
-    />
-  )
-}
-
-const SeedInput = () => {
-  const [seed, setSeed] = useAtom(seedAtom)
-
-  return (
-    <TextInput
-      w={64}
-      label="seed"
-      value={seed}
-      type="number"
-      placeholder="empty for random"
-      onChange={(e) => setSeed(parseInt(e.target.value))}
-    />
-  )
-}
-
-const V2Checkbox = () => {
-  const [{ v2 }, set] = useAtom(settingsAtom)
-
-  return (
-    <Checkbox
-      label="v2"
-      checked={v2}
-      onChange={(e) => set({ v2: e.target.checked })}
-    />
-  )
-}
-
-const CFGInput = () => {
-  const [{ cfg }, set] = useAtom(settingsAtom)
-
-  return (
-    <TextInput
-      w={64}
-      label="cfg"
-      value={cfg}
-      type="number"
-      onChange={(e) => set({ cfg: parseFloat(e.target.value) })}
-    />
-  )
-}
-
-const StepsInput = () => {
-  const [{ steps }, set] = useAtom(settingsAtom)
-
-  return (
-    <TextInput
-      w={64}
-      label="steps"
-      value={steps}
-      type="number"
-      onChange={(e) => set({ steps: parseInt(e.target.value) })}
-    />
   )
 }
 
 export default function Canvas() {
   const ref = useRef()
   const [instance, setInstance] = useState(null)
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes)
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes())
+
+  useEffect(() => {
+    const savedState = loadFlowState()
+    if (savedState) {
+      setNodes(savedState.nodes)
+    }
+  }, [])
 
   return (
     <>
       <ImageModal />
-      <Flex gap="md" align="end">
-        <AddPrompt setNodes={setNodes} />
-        <Flex direction="column" w="40%">
-          <BasePromptInput />
-          <NegPromptInput />
-        </Flex>
-        <Flex direction="column">
-          <Flex align="end" gap="md">
-            <CFGInput />
-            <StepsInput />
-          </Flex>
-          <Flex align="end" gap="md">
-            <SeedInput />
-            <V2Checkbox />
-          </Flex>
-        </Flex>
-        <StartButton nodes={nodes} setNodes={setNodes} />
-      </Flex>
       <div
         style={{
-          marginTop: 8,
-          width: '95vw',
-          height: '85vh',
+          width: '100%',
+          height: '100%',
         }}
       >
         <ReactFlow
@@ -206,6 +126,7 @@ export default function Canvas() {
             setNodes((n) =>
               addImageNodeForPosition(n, position, instance.getZoom())
             )
+            setTimeout(() => saveFlowState(instance), 100)
           }}
           onPaneMouseMove={({ clientX, clientY }) => {
             if (!instance || !ref.current) return
@@ -226,5 +147,17 @@ export default function Canvas() {
         </ReactFlow>
       </div>
     </>
+  )
+}
+
+Canvas.Header = function () {
+  return (
+    <Flex w="100%" gap="md">
+      <AddPrompt />
+      <Flex gap="md" direction="column">
+        {/* <SaveButton /> */}
+        <ClearButton />
+      </Flex>
+    </Flex>
   )
 }
