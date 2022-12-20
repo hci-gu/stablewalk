@@ -35,6 +35,8 @@ const convert = (p1, p2, sliderValue, basePrompt, seed) => {
 }
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
+const imageToKey = ({ weights }) => `${weights.join('-')}`
+
 const valueFor = (from, to, i, steps) => from + (to - from) * (i / steps)
 
 const InsertSteps = ({ index }) => {
@@ -55,7 +57,7 @@ const InsertSteps = ({ index }) => {
         weights,
       }
     })
-    updateImages.splice(index + 1, 0, ...newImages)
+    updateImages.splice(index, 0, ...newImages)
     setSequence((s) => ({
       ...s,
       images: updateImages,
@@ -88,13 +90,17 @@ export default function Combine() {
       >
         {images.map((image, i) => (
           <Flex gap="md" align="center">
-            {editing && i > 0 && <InsertSteps index={i} />}
+            {editing && (
+              <>
+                {i > 0 && <InsertSteps index={i} />}
+                {i === 0 && <Container w={80} />}
+              </>
+            )}
             <SequenceImage
               {...image}
               name={`Step ${i}`}
-              key={`Sequence_prompt_${i}`}
+              key={`Sequence_prompt_${imageToKey(image)}`}
               editing={editing}
-              fill
             />
           </Flex>
         ))}
@@ -164,6 +170,19 @@ const EditingButton = () => {
   )
 }
 
+const ClearButton = () => {
+  const [, setSequence] = useAtom(sequenceAtom)
+
+  return (
+    <Button
+      onClick={() => setSequence((s) => ({ ...s, images: [] }))}
+      color="red"
+    >
+      Clear
+    </Button>
+  )
+}
+
 Combine.Header = function () {
   const { from, to } = useAtomValue(sequenceAtom)
 
@@ -175,6 +194,7 @@ Combine.Header = function () {
       <Flex direction="column" gap="md">
         <EditingButton />
         <GenerateButton />
+        <ClearButton />
       </Flex>
     </Flex>
   )
