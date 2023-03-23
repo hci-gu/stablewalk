@@ -73,7 +73,6 @@ const Layout = ({ children, pageHeader }) => {
           >
             <Tabs.List p={4}>
               <Tabs.Tab value="/">Grid</Tabs.Tab>
-              <Tabs.Tab value="/combine">Combine</Tabs.Tab>
               <Tabs.Tab value="/canvas">Canvas</Tabs.Tab>
               <Container pos="absolute" right={0} mt={4}>
                 <DarkMode />

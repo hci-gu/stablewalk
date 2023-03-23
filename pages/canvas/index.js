@@ -1,9 +1,13 @@
 import ReactFlow, {
   Background,
   Controls,
+  Handle,
   ReactFlowProvider,
+  addEdge,
+  useEdgesState,
   useNodesState,
   useReactFlow,
+  useStore,
 } from 'reactflow'
 import 'reactflow/dist/style.css'
 import {
@@ -28,13 +32,49 @@ import {
 } from './utils'
 import ImageModal from '../../components/ImageModal'
 import { IconEraser } from '@tabler/icons'
+import SequenceEdge from './SequenceEdge'
 
 const nodeTypes = {
   prompt: PromptNode,
   combiner: CombinerNode,
-  image: ({ data }) => {
-    return <PromptImage {...data} />
+  image: ({ data, ...props }) => {
+    const instance = useReactFlow()
+    const connectionNodeId = useStore((s) => s.connectionNodeId)
+    const isTarget = connectionNodeId && connectionNodeId !== data.id
+    const targetSize = 25 / instance.getZoom()
+    const sourceSize = 10 / instance.getZoom()
+
+    return (
+      <>
+        <Handle
+          type="target"
+          position="left"
+          id="sequence-target"
+          style={{
+            background: isTarget ? '#C3423F' : 'rgba(0, 0, 0, 0)',
+            width: isTarget ? targetSize : 5,
+            height: isTarget ? targetSize : 5,
+            marginLeft: isTarget ? -targetSize / 2 : 0,
+          }}
+        />
+        <Handle
+          type="source"
+          position="right"
+          id="sequence-source"
+          style={{
+            width: sourceSize,
+            height: sourceSize,
+            marginRight: -sourceSize / 2,
+          }}
+        />
+        <PromptImage {...data} />
+      </>
+    )
   },
+}
+
+const edgeTypes = {
+  sequence: SequenceEdge,
 }
 
 const AddPrompt = () => {
@@ -44,6 +84,7 @@ const AddPrompt = () => {
 
   const onSubmit = (e) => {
     e.preventDefault()
+    setText('')
     instance.setNodes((nodes) => [...nodes, newPromptNode(text)])
     setTimeout(() => saveFlowState(instance), 100)
   }
@@ -87,6 +128,7 @@ export default function Canvas() {
   const ref = useRef()
   const [instance, setInstance] = useState(null)
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes())
+  const [edges, setEdges, onEdgesChange] = useEdgesState([])
 
   useEffect(() => {
     const savedState = loadFlowState()
@@ -106,13 +148,21 @@ export default function Canvas() {
       >
         <ReactFlow
           ref={ref}
-          nodes={nodes}
+          nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
           onInit={(instance) => setInstance(instance)}
+          nodes={nodes}
+          edges={edges}
           onNodesChange={(changes) => {
             onNodesChange(changes)
             setNodes((n) => makeUpdatesForChange(changes, n))
           }}
-          nodeTypes={nodeTypes}
+          onEdgesChange={(changes) => {
+            onEdgesChange(changes)
+          }}
+          onConnect={(params) => {
+            setEdges(() => addEdge({ ...params, type: 'sequence' }, []))
+          }}
           onMove={(e, { zoom }) => {
             setNodes((n) => updateNodesForZoom(n, zoom))
           }}
@@ -137,12 +187,16 @@ export default function Canvas() {
             })
             setNodes((n) => moveCombinerNode(n, position))
           }}
+          // defaultViewport={{
+          //   zoom: 0.5,
+          // }}
           nodeOrigin={[0.5, 0.5]}
           fitView
           minZoom={0.01}
           maxZoom={20}
+          connectionLineType="straight"
         >
-          <Background />
+          {/* <Background /> */}
           <Controls />
         </ReactFlow>
       </div>
@@ -155,7 +209,6 @@ Canvas.Header = function () {
     <Flex w="100%" gap="md">
       <AddPrompt />
       <Flex gap="md" direction="column">
-        {/* <SaveButton /> */}
         <ClearButton />
       </Flex>
     </Flex>

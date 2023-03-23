@@ -12,6 +12,8 @@ const CombinerNode = ({ xPos, yPos, ...props }) => {
 
   const zoom = Math.max(instance.getZoom(), 1)
 
+  if (weights.length <= 1) return null
+
   return (
     <Flex gap={4} mb={4 + 64 / zoom}>
       {weights.map((w, i) => (
