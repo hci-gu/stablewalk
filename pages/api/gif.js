@@ -10,7 +10,7 @@ export default async function handler(req, res) {
   const images = req.body.images
 
   images.forEach((image, i) => {
-    const fileName = `img-${i}.png`
+    const fileName = `img-${i}.jpg`
     const filePath = path.join(basePath, 'frames', fileName)
     // copy image to folder
     fs.copyFileSync(path.join(basePath, image), filePath)

@@ -17,11 +17,12 @@ const fileNameFor = (prompts, weights, seed, neg_prompt, steps, cfg, v2) => {
     name = sha1(name)
   }
 
-  return `${name}.png`
+  return `${name}.jpg`
 }
 
 export default async function handler(req, res) {
-  const { weights, seed, basePrompt, neg_prompt, steps, cfg, v2 } = req.body
+  const { weights, seed, basePrompt, neg_prompt, steps, cfg, v2, size } =
+    req.body
   const prompts =
     req.body.prompts?.map(
       (p) => `${p}${basePrompt ? `, ${basePrompt}` : ''}`
@@ -33,6 +34,7 @@ export default async function handler(req, res) {
     neg_prompt,
     steps,
     cfg,
+    size,
     v2
   )
 
@@ -44,6 +46,7 @@ export default async function handler(req, res) {
     steps,
     cfg,
     v2,
+    size,
   }
 
   // mock
@@ -51,13 +54,14 @@ export default async function handler(req, res) {
   // return
 
   // // check if image exists
-  if (fs.existsSync(path.join(imgPath, fileName))) {
-    res.send(`/images/${fileName}`)
-    return
-  }
+  // if (fs.existsSync(path.join(imgPath, fileName))) {
+  //   res.send(`/images/${fileName}`)
+  //   return
+  // }
+  console.log(body)
 
   axios
-    .post('http://leviathan.itit.gu.se:5000/combine', body, {
+    .post('http://130.241.23.151:4000/combine', body, {
       responseType: 'stream',
     })
     .then((response) => {
@@ -66,4 +70,25 @@ export default async function handler(req, res) {
         res.send(`/images/${fileName}`)
       })
     })
+
+  /*
+  axios.post('http://130.241.23.151:4000/combine', body).then((response) => {
+    let received = new Date().getTime()
+    const { image, ...timestamps } = response.data
+    fs.writeFileSync(path.join(imgPath, fileName), image, 'base64')
+    let file_written = new Date().getTime()
+    console.log(file_written)
+    res.send({
+      image: `/images/${fileName}`,
+      timestamps: {
+        ...timestamps,
+        received,
+        file_written: file_written - received,
+      },
+    })
+    // response.data.on('end', () => {
+    //   res.send(`/images/${fileName}`)
+    // })
+  })
+  */
 }

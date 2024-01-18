@@ -13,8 +13,6 @@ const PromptImage = ({ prompts, weights, width = 200, height = 200 }) => {
   const getImage = useGetImage()
 
   useEffect(() => {
-    setLoading(true)
-
     getImage(prompts, weights, settings, seed).then((image) => {
       setImage(image)
       setLoading(false)

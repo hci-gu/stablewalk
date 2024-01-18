@@ -68,6 +68,20 @@ const CFGInput = () => {
   )
 }
 
+const SizeInput = () => {
+  const [{ size }, set] = useAtom(settingsAtom)
+
+  return (
+    <TextInput
+      w={64}
+      label="size"
+      value={size}
+      type="number"
+      onChange={(e) => set({ size: parseInt(e.target.value) })}
+    />
+  )
+}
+
 const StepsInput = () => {
   const [{ steps }, set] = useAtom(settingsAtom)
 
@@ -98,7 +112,7 @@ const PromptSettings = () => {
           </Flex>
           <Flex align="end" gap="md">
             <SeedInput />
-            <V2Checkbox />
+            <SizeInput />
           </Flex>
         </Flex>
       </Flex>

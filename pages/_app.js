@@ -74,6 +74,9 @@ const Layout = ({ children, pageHeader }) => {
             <Tabs.List p={4}>
               <Tabs.Tab value="/">Grid</Tabs.Tab>
               <Tabs.Tab value="/canvas">Canvas</Tabs.Tab>
+              <Tabs.Tab value="/benchmark">Benchmark</Tabs.Tab>
+              <Tabs.Tab value="/websocket">Websocket</Tabs.Tab>
+              <Tabs.Tab value="/infinite">Infinite</Tabs.Tab>
               <Container pos="absolute" right={0} mt={4}>
                 <DarkMode />
               </Container>

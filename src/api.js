@@ -51,7 +51,7 @@ const getImage = async (
     return cache[stringified]
   }
 
-  const response = await queue.add(() => axios.post(`/api/image`, body))
+  const response = await axios.post(`/api/image`, body)
 
   cache[stringified] = response.data
 
@@ -60,7 +60,7 @@ const getImage = async (
 
 export const useGetImage = () => {
   const [seed] = useAtom(seedAtom)
-  const debouncedGetImage = useMemo(() => debounce(getImage, 500), [])
+  const debouncedGetImage = useMemo(() => debounce(getImage, 15), [])
 
   useDidUpdateEffect(() => {
     queue.clear()
