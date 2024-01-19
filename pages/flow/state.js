@@ -1,10 +1,13 @@
 import { atom } from 'jotai'
+import axios from 'axios'
 
 export const POSITION_DEBUGGER_TYPE = 'positionDebugger'
 
 export const nodesAtom = atom([
   { id: '1', position: { x: 0, y: 0 }, data: { label: '1' } },
 ])
+
+
 
 export const positionNodesAtom = atom((get) => {
   const nodes = get(nodesAtom)
@@ -30,3 +33,25 @@ export const isDistanceOver500Atom = atom((get) => {
 
   return distance > 500
 })
+
+export const fetchStuffWhenOver500Atom = atom(async (get) => {
+
+})
+
+// export const promptsAtom = atom([])
+// export const seedAtom = atom(0)
+// export const negativePromptAtom = atom('')
+
+// export const imageAtom = atom(async (get) => {
+//     const seed = get(seedAtom)
+//     const prompts = get(promptsAtom)
+//     const negativePrompt = get(negativePromptAtom)
+
+//     const image = await axios.get('/api/image', {
+//         prompts,
+//         seed,
+//         negativePrompt
+//     })
+
+//     return image
+// })
