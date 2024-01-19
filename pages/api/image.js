@@ -50,8 +50,8 @@ export default async function handler(req, res) {
   }
 
   // mock
-  // res.send(`/images/1d8abd09f15eeb8b950e095f1d36dbb31cc568b9.png`)
-  // return
+  res.send(`/images/1d8abd09f15eeb8b950e095f1d36dbb31cc568b9.png`)
+  return
 
   // // check if image exists
   // if (fs.existsSync(path.join(imgPath, fileName))) {

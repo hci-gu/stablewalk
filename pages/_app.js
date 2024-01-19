@@ -77,6 +77,7 @@ const Layout = ({ children, pageHeader }) => {
               <Tabs.Tab value="/benchmark">Benchmark</Tabs.Tab>
               <Tabs.Tab value="/websocket">Websocket</Tabs.Tab>
               <Tabs.Tab value="/infinite">Infinite</Tabs.Tab>
+              <Tabs.Tab value="/flow">Flow</Tabs.Tab>
               <Container pos="absolute" right={0} mt={4}>
                 <DarkMode />
               </Container>
@@ -89,8 +90,8 @@ const Layout = ({ children, pageHeader }) => {
             </Tabs.List>
             {visible && (
               <Flex p="md" align="center" gap="md">
-                <PromptSettings />
-                <Divider orientation="vertical" />
+                {/* <PromptSettings /> */}
+                {/* <Divider orientation="vertical" /> */}
                 {pageHeader}
               </Flex>
             )}
