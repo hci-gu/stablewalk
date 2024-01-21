@@ -1,24 +1,21 @@
 import ReactFlow, {
   Background,
   Controls,
-  Handle,
-  ReactFlowProvider,
-  addEdge,
   useEdgesState,
   useNodesState,
-  useReactFlow,
 } from 'reactflow'
 import 'reactflow/dist/style.css'
-import { seedAtom, settingsAtom, startedAtom } from '../../src/state'
-import { Button, Flex, TextInput } from '@mantine/core'
+import { seedAtom, settingsAtom } from '../../src/state'
+import { Flex } from '@mantine/core'
 import { useAtomValue } from 'jotai'
 import { useRef, useState } from 'react'
-import { IconEraser } from '@tabler/icons'
 import useWebSocket from './useWebsocket'
 import PreviewNode from './PreviewNode'
 import { makeUpdatesForChange, movePreviewNode } from './utils'
 import PromptNode from './PromptNode'
 import { initialNodes, newPromptNode } from './state'
+import { AddPrompt } from '../../components/AddPrompt'
+import { ClearButton } from '../../components/ClearButton'
 
 const nodeTypes = {
   prompt: PromptNode,
@@ -26,51 +23,6 @@ const nodeTypes = {
 }
 
 const edgeTypes = {}
-
-const AddPrompt = () => {
-  const instance = useReactFlow()
-  const [text, setText] = useState('')
-  const started = useAtomValue(startedAtom)
-
-  const onSubmit = (e) => {
-    e.preventDefault()
-    setText('')
-    instance.setNodes((nodes) => [...nodes, newPromptNode(text)])
-  }
-
-  return (
-    <form onSubmit={onSubmit}>
-      <Flex direction="column" gap="xs">
-        <TextInput
-          w={250}
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder="Prompt"
-          disabled={started}
-        />
-        <Button variant="light" onClick={onSubmit} disabled={started}>
-          Add prompt
-        </Button>
-      </Flex>
-    </form>
-  )
-}
-
-export const ClearButton = () => {
-  const instance = useReactFlow()
-
-  return (
-    <Button
-      leftIcon={<IconEraser />}
-      color="red"
-      onClick={() => {
-        instance.setNodes(initialNodes())
-      }}
-    >
-      Clear
-    </Button>
-  )
-}
 
 export default function Canvas() {
   const ref = useRef()
@@ -100,10 +52,7 @@ export default function Canvas() {
       y: clientY - bounds.top,
     })
 
-    setNodes((node) => [
-      ...node,
-      newPromptNode(null, position.x, position.y),
-    ])
+    setNodes((node) => [...node, newPromptNode(null, position.x, position.y)])
 
     console.log(bounds)
   }

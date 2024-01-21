@@ -1,50 +1,10 @@
-import {
-  ActionIcon,
-  Badge,
-  Button,
-  Card,
-  Flex,
-  Text,
-  TextInput,
-} from '@mantine/core'
-import { initialNodes, newPromptNode } from './state'
-import { useNodesState, useReactFlow } from 'reactflow'
-import { useState } from 'react'
-import { useAtomValue } from 'jotai'
-import { startedAtom } from '../../src/state'
-
-const AddPrompt = () => {
-  const instance = useReactFlow()
-  const [text, setText] = useState('')
-  const started = useAtomValue(startedAtom)
-
-  const onSubmit = (e) => {
-    e.preventDefault()
-    setText('')
-    instance.setNodes((nodes) => [...nodes, newPromptNode(text)])
-  }
-
-  return (
-    <form onSubmit={onSubmit}>
-      <Flex direction="column" gap="xs">
-        <TextInput
-          w={250}
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder="Prompt"
-          disabled={started}
-        />
-        <Button variant="light" onClick={onSubmit} disabled={started}>
-          Add prompt
-        </Button>
-      </Flex>
-    </form>
-  )
-}
+import { Badge, Card, Flex } from '@mantine/core'
+import { initialNodes } from './state'
+import { useNodesState } from 'reactflow'
+import AddPrompt from '../../components/AddPrompt'
 
 const PromptNode = ({ data }) => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes())
-  console.log(nodes)
   return (
     <Card
       shadow="sm"
