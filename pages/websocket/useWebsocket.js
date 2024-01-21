@@ -29,7 +29,7 @@ const useWebSocket = () => {
 
     let sendInterval = setInterval(() => {
       if (currentMessage && currentMessage !== prevMessage) {
-        console.log(currentMessage)
+        // console.log(currentMessage)
         webSocket.send(JSON.stringify(currentMessage))
         prevMessage = currentMessage
       }

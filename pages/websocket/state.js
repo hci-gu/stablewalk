@@ -5,7 +5,7 @@ const colors = allColors[0]
 let id = 1
 const getId = () => `${id++}`
 
-export const newPromptNode = (prompt = '') => {
+export const newPromptNode = (prompt = '', x = 100, y = 100) => {
   const id = getId()
   return {
     id,
@@ -16,7 +16,7 @@ export const newPromptNode = (prompt = '') => {
       weights: [1],
       color: colors[parseInt(id) % colors.length],
     },
-    position: { x: 100, y: 100 },
+    position: { x, y },
   }
 }
 

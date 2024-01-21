@@ -61,7 +61,7 @@ export const movePreviewNode = (nodes, cursorPos, settings, seed, emit) => {
 
   return nodes.map((n) => {
     if (n.id === combinerNode.id) {
-      console.log('mov me')
+      // console.log('mov me')
       return {
         ...n,
         position: {
