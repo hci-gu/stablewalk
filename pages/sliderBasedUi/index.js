@@ -8,7 +8,7 @@ const NewPrompt = () => {
   const [prompts, setPrompts] = useAtom(promptsAtom)
 
   const addAndReset = () => {
-    setNewPrompt(prompts.push(newPrompt))
+    setPrompts([...prompts, newPrompt])
     setNewPrompt({ id: 0, label: '', weight: 0 })
   }
 
@@ -65,13 +65,7 @@ const PromptContainer = () => {
       <Flex w={'100%'} direction={'column'} gap={16}>
         {useEffect(() => {
           console.log(promptsListener)
-          promptsListener.map((prompt) => {
-            return (
-              <>
-                <Text>{prompt.label}</Text>
-              </>
-            )
-          })
+
         }, [promptsListener])}
       </Flex>
     </>
