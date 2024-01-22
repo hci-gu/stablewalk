@@ -2,6 +2,7 @@ import { Button, Flex, Image, Text, TextInput } from '@mantine/core'
 import { useAtom, useAtomValue } from 'jotai'
 import { newPromptAtom, promptsAtom } from './state'
 import { useEffect } from 'react'
+import { seedAtom } from '../../src/state'
 
 const NewPrompt = () => {
   const [newPrompt, setNewPrompt] = useAtom(newPromptAtom)
@@ -27,20 +28,34 @@ const NewPrompt = () => {
             })
           }
         />
-        <Button onClick={addAndReset}>Add</Button>
+        <Button
+          disabled={newPrompt.label != '' ? false : true}
+          onClick={addAndReset}
+        >
+          Add
+        </Button>
       </Flex>
     </>
   )
 }
 
 const SeedSelector = () => {
+  const [seed, setSeed] = useAtom(seedAtom)
+
   return (
     <>
       <Flex w={'100%'} gap={8}>
-        <Button variant="outline" color="gray" w={'100%'}>
+        <Button
+          variant="outline"
+          color="gray"
+          w={'100%'}
+          onClick={() => setSeed(seed - 1)}
+        >
           Prev Seed
         </Button>
-        <Button w={'100%'}>New Seed</Button>
+        <Button w={'100%'} onClick={() => setSeed(seed + 1)}>
+          New Seed
+        </Button>
       </Flex>
     </>
   )
@@ -65,7 +80,6 @@ const PromptContainer = () => {
       <Flex w={'100%'} direction={'column'} gap={16}>
         {useEffect(() => {
           console.log(promptsListener)
-
         }, [promptsListener])}
       </Flex>
     </>
