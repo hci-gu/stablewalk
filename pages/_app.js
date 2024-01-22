@@ -77,6 +77,7 @@ const Layout = ({ children, pageHeader }) => {
               <Tabs.Tab value="/benchmark">Benchmark</Tabs.Tab>
               <Tabs.Tab value="/websocket">Websocket</Tabs.Tab>
               <Tabs.Tab value="/infinite">Infinite</Tabs.Tab>
+              <Tabs.Tab value="/sidebar">sidebar</Tabs.Tab>
               <Container pos="absolute" right={0} mt={4}>
                 <DarkMode />
               </Container>
