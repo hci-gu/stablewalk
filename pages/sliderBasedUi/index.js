@@ -1,8 +1,9 @@
-import { Button, Flex, Image, Text, TextInput } from '@mantine/core'
+import { Button, Flex, Image, Slider, Text, TextInput } from '@mantine/core'
 import { useAtom, useAtomValue } from 'jotai'
 import { newPromptAtom, promptsAtom } from './state'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { seedAtom } from '../../src/state'
+import { IconTrash } from '@tabler/icons'
 
 const NewPrompt = () => {
   const [newPrompt, setNewPrompt] = useAtom(newPromptAtom)
@@ -73,14 +74,46 @@ const PromptAdder = () => {
   )
 }
 
+const Prompt = ({ prompt }) => {
+  const [text, setText] = useState(prompt.label);
+  const [weight, setWeight] = useState(prompt.weight);
+
+  prompt.label = text;
+  prompt.weight = weight;
+
+  
+  return (
+    <Flex direction="row" align="center" gap={0}>
+      <Button variant="transparent" onClick={() => {console.log(`click on ${prompt.id}`);}}>
+        <IconTrash size={25} color="#ED6969" />
+      </Button>
+
+      <Flex direction="column" gap={16}>
+        <TextInput
+          styles={{
+            input: {
+              border: '3px solid #73758C',
+              color: 'white',
+              backgroundColor: '#515262',
+            },
+          }}
+          value={text}
+          onChange={(e) => setText(e.currentTarget.value)}
+        />
+        <Slider defaultValue={weight} onChange={(e) => setWeight(e)} />
+      </Flex>
+    </Flex>
+  )
+}
+
 const PromptContainer = () => {
   const promptsListener = useAtomValue(promptsAtom)
   return (
     <>
       <Flex w={'100%'} direction={'column'} gap={16}>
-        {useEffect(() => {
-          console.log(promptsListener)
-        }, [promptsListener])}
+        {promptsListener.map((prompt, index) => (
+          <Prompt key={index} prompt={{ ...prompt, id: index }} />
+        ))}
       </Flex>
     </>
   )
