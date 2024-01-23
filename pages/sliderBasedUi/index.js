@@ -73,7 +73,7 @@ const SeedSelector = () => {
 const PromptAdder = () => {
   return (
     <>
-      <Text c={'white'} size={32}>
+      <Text size={32}>
         New Prompt
       </Text>
       <NewPrompt />
