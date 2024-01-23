@@ -3,15 +3,13 @@ import {
   Divider,
   Flex,
   Image,
-  NumberInput,
-  RangeSlider,
   Slider,
   Text,
   TextInput,
 } from '@mantine/core'
-import { useAtom, useAtomValue, useSetAtom } from 'jotai'
-import { newPromptAtom, promptsAtom } from './state'
-import { use, useEffect, useState } from 'react'
+import { useAtom, useSetAtom } from 'jotai'
+import { promptsAtom } from './state'
+import { useState } from 'react'
 import { seedAtom } from '../../src/state'
 import { IconTrash } from '@tabler/icons'
 
@@ -21,6 +19,7 @@ const NewPrompt = () => {
 
   const addAndReset = (e) => {
     e.preventDefault()
+    
     setPrompts((s) => [...s, { id: s.length, label: prompt, weight: 0 }])
     setPrompt('')
   }
@@ -103,16 +102,13 @@ const Prompt = ({ prompt, onDelete, onChange }) => {
 
 const PromptContainer = () => {
   const [prompts, setPrompts] = useAtom(promptsAtom)
-  console.log('PromptContainer', prompts)
 
   const deletePrompt = (id) => {
-    console.log('onDelete', id)
 
     setPrompts((s) => s.filter((val) => val.id !== id))
   }
 
   const updatePrompts = (id, field, value) => {
-    console.log('updatePrompts', prompts, id, field, value)
     setPrompts((s) =>
       s.map((prompt) => {
         if (prompt.id === id) {
@@ -123,10 +119,6 @@ const PromptContainer = () => {
     )
   }
 
-  // useEffect(() => {
-  //   console.table(promptsListener)
-  // }, [promptsListener])
-
   return (
     <>
       <Flex w={'100%'} direction={'column'} gap={16}>
@@ -134,7 +126,7 @@ const PromptContainer = () => {
           <Prompt
             key={prompt.id}
             prompt={prompt}
-            onDelete={(id) => deletePrompt(id)}
+            onDelete={deletePrompt}
             onChange={updatePrompts}
           />
         ))}
