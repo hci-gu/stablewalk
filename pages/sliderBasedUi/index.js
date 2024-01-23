@@ -1,7 +1,7 @@
 import { Button, Flex, Image, Slider, Text, TextInput } from '@mantine/core'
 import { useAtom, useAtomValue } from 'jotai'
 import { newPromptAtom, promptsAtom } from './state'
-import { useEffect, useState } from 'react'
+import { use, useEffect, useState } from 'react'
 import { seedAtom } from '../../src/state'
 import { IconTrash } from '@tabler/icons'
 
@@ -75,16 +75,23 @@ const PromptAdder = () => {
 }
 
 const Prompt = ({ prompt }) => {
-  const [text, setText] = useState(prompt.label);
-  const [weight, setWeight] = useState(prompt.weight);
+  const [prompts, setPrompts] = useAtom(promptsAtom)
 
-  prompt.label = text;
-  prompt.weight = weight;
+  const delatePrompt = () => {
+    const newPrompts = prompts.filter((val) => val.id !== prompt.id)
 
-  
+    setPrompts(() => newPrompts)
+  }
+
+  const [text, setText] = useState(prompt.label)
+  const [weight, setWeight] = useState(prompt.weight)
+
+  prompt.label = text
+  prompt.weight = weight
+
   return (
     <Flex direction="row" align="center" gap={0}>
-      <Button variant="transparent" onClick={() => {console.log(`click on ${prompt.id}`);}}>
+      <Button variant="transparent" onClick={delatePrompt}>
         <IconTrash size={25} color="#ED6969" />
       </Button>
 
@@ -108,11 +115,16 @@ const Prompt = ({ prompt }) => {
 
 const PromptContainer = () => {
   const promptsListener = useAtomValue(promptsAtom)
+
+  useEffect(() => {
+    console.table(promptsListener)
+  }, [promptsListener])
+
   return (
     <>
       <Flex w={'100%'} direction={'column'} gap={16}>
         {promptsListener.map((prompt, index) => (
-          <Prompt key={index} prompt={{ ...prompt, id: index }} />
+          <Prompt key={index} prompt={{ ...prompt }} />
         ))}
       </Flex>
     </>
