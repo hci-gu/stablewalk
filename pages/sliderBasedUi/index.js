@@ -3,24 +3,26 @@ import {
   Divider,
   Flex,
   Image,
+  NumberInput,
+  RangeSlider,
   Slider,
   Text,
   TextInput,
 } from '@mantine/core'
-import { useAtom, useAtomValue } from 'jotai'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { newPromptAtom, promptsAtom } from './state'
 import { use, useEffect, useState } from 'react'
 import { seedAtom } from '../../src/state'
 import { IconTrash } from '@tabler/icons'
 
 const NewPrompt = () => {
-  const [newPrompt, setNewPrompt] = useAtom(newPromptAtom)
-  const [prompts, setPrompts] = useAtom(promptsAtom)
+  const [prompt, setPrompt] = useState('')
+  const setPrompts = useSetAtom(promptsAtom)
 
   const addAndReset = (e) => {
     e.preventDefault()
-    setPrompts([...prompts, newPrompt])
-    setNewPrompt({ id: 0, label: '', weight: 0 })
+    setPrompts((s) => [...s, { id: s.length, label: prompt, weight: 0 }])
+    setPrompt('')
   }
 
   return (
@@ -30,16 +32,10 @@ const NewPrompt = () => {
           <TextInput
             w={'100%'}
             placeholder="dog"
-            value={newPrompt.label}
-            onChange={(e) =>
-              setNewPrompt({
-                ...newPrompt,
-                id: prompts.length + 1,
-                label: e.target.value,
-              })
-            }
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
           />
-          <Button type="submit" disabled={newPrompt.label != '' ? false : true}>
+          <Button type="submit" disabled={prompt.length === 0}>
             Add
           </Button>
         </Flex>
@@ -80,49 +76,24 @@ const PromptAdder = () => {
   )
 }
 
-const Prompt = ({ prompt }) => {
-  const [prompts, setPrompts] = useAtom(promptsAtom)
-
-  const delatePrompt = () => {
-    const newPrompts = prompts.filter((val) => val.id !== prompt.id)
-
-    setPrompts(() => newPrompts)
-  }
-
-  const updatePrompts = (id, field, value) => {
-    const newArr = [...prompts]
-
-    console.log(newArr)
-
-    const index = newArr.findIndex((obj) => obj.id === id)
-
-    newArr[index] = { ...newArr[index], [field]: value }
-
-    setPrompts(newArr)
-  }
-
+const Prompt = ({ prompt, onDelete, onChange }) => {
   return (
     <Flex direction="row" align="center" gap={0}>
-      <Button variant="transparent">
+      <Button variant="transparent" onClick={() => onDelete(prompt.id)}>
         <IconTrash size={25} color="#ED6969" />
       </Button>
 
       <Flex direction="column" gap={16}>
         <TextInput
-          styles={{
-            input: {
-              border: '3px solid #73758C',
-              color: 'white',
-              backgroundColor: '#515262',
-            },
-          }}
           value={prompt.label}
-          onChange={(e) => updatePrompts(prompt.id, 'label', e.target.value)}
+          onChange={(e) => onChange(prompt.id, 'label', e.target.value)}
         />
         <Slider
+          min={0}
+          max={100}
           value={prompt.weight}
           onChange={(value) => {
-            updatePrompts(prompt.id, 'weight', value)
+            onChange(prompt.id, 'weight', value)
           }}
         />
       </Flex>
@@ -131,17 +102,41 @@ const Prompt = ({ prompt }) => {
 }
 
 const PromptContainer = () => {
-  const promptsListener = useAtomValue(promptsAtom)
+  const [prompts, setPrompts] = useAtom(promptsAtom)
+  console.log('PromptContainer', prompts)
 
-  useEffect(() => {
-    // console.table(promptsListener)
-  }, [promptsListener])
+  const deletePrompt = (id) => {
+    console.log('onDelete', id)
+
+    setPrompts((s) => s.filter((val) => val.id !== id))
+  }
+
+  const updatePrompts = (id, field, value) => {
+    console.log('updatePrompts', prompts, id, field, value)
+    setPrompts((s) =>
+      s.map((prompt) => {
+        if (prompt.id === id) {
+          return { ...prompt, [field]: value }
+        }
+        return prompt
+      })
+    )
+  }
+
+  // useEffect(() => {
+  //   console.table(promptsListener)
+  // }, [promptsListener])
 
   return (
     <>
       <Flex w={'100%'} direction={'column'} gap={16}>
-        {promptsListener.map((prompt, index) => (
-          <Prompt key={index} prompt={{ ...prompt }} />
+        {prompts.map((prompt) => (
+          <Prompt
+            key={prompt.id}
+            prompt={prompt}
+            onDelete={(id) => deletePrompt(id)}
+            onChange={updatePrompts}
+          />
         ))}
       </Flex>
     </>
