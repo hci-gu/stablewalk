@@ -1,4 +1,12 @@
-import { Button, Flex, Image, Slider, Text, TextInput } from '@mantine/core'
+import {
+  Button,
+  Divider,
+  Flex,
+  Image,
+  Slider,
+  Text,
+  TextInput,
+} from '@mantine/core'
 import { useAtom, useAtomValue } from 'jotai'
 import { newPromptAtom, promptsAtom } from './state'
 import { use, useEffect, useState } from 'react'
@@ -9,33 +17,33 @@ const NewPrompt = () => {
   const [newPrompt, setNewPrompt] = useAtom(newPromptAtom)
   const [prompts, setPrompts] = useAtom(promptsAtom)
 
-  const addAndReset = () => {
+  const addAndReset = (e) => {
+    e.preventDefault()
     setPrompts([...prompts, newPrompt])
     setNewPrompt({ id: 0, label: '', weight: 0 })
   }
 
   return (
     <>
-      <Flex w={'100%'} gap={8}>
-        <TextInput
-          w={'100%'}
-          placeholder="dog"
-          value={newPrompt.label}
-          onChange={(e) =>
-            setNewPrompt({
-              ...newPrompt,
-              id: prompts.length + 1,
-              label: e.target.value,
-            })
-          }
-        />
-        <Button
-          disabled={newPrompt.label != '' ? false : true}
-          onClick={addAndReset}
-        >
-          Add
-        </Button>
-      </Flex>
+      <form onSubmit={(e) => addAndReset(e)}>
+        <Flex w={'100%'} gap={8}>
+          <TextInput
+            w={'100%'}
+            placeholder="dog"
+            value={newPrompt.label}
+            onChange={(e) =>
+              setNewPrompt({
+                ...newPrompt,
+                id: prompts.length + 1,
+                label: e.target.value,
+              })
+            }
+          />
+          <Button type="submit" disabled={newPrompt.label != '' ? false : true}>
+            Add
+          </Button>
+        </Flex>
+      </form>
     </>
   )
 }
@@ -65,7 +73,7 @@ const SeedSelector = () => {
 const PromptAdder = () => {
   return (
     <>
-      <Text c={'white'} size={32}>
+      <Text size={32}>
         New Prompt
       </Text>
       <NewPrompt />
@@ -137,15 +145,23 @@ const Main = () => {
       <main style={{ display: 'flex', width: '100%', height: '100%' }}>
         <Flex
           w={'40vw'}
-          bg={'#464755'}
+          // bg={'#464755'}
           px={16}
           py={18}
           align={'center'}
           direction={'column'}
         >
-          <Flex align={'center'} direction={'column'} gap={8}>
-            <PromptAdder />
-            <PromptContainer />
+          <Flex gap={32}>
+            <Flex align={'center'} direction={'column'} gap={8}>
+              <PromptAdder />
+              <PromptContainer />
+            </Flex>
+            <Divider
+              orientation="vertical"
+              size={'sm'}
+              h={'75vh'}
+              variant="solid"
+            />
           </Flex>
         </Flex>
         <Flex p={'64px'}>
