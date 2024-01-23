@@ -89,7 +89,7 @@ const Prompt = ({ prompt, onDelete, onChange }) => {
         />
         <Slider
           min={0}
-          max={100}
+          max={300}
           value={prompt.weight}
           onChange={(value) => {
             onChange(prompt.id, 'weight', value)
@@ -162,12 +162,6 @@ const ImgGetter = () => {
 
 const Main = () => {
   const img = useAtomValue(imgAtom)
-  let imgSRC = `data:image/jpg;base64,${img}`
-
-  useEffect(() => {
-    // imgSRC = `data:image/jpeg;base64,${img}`
-    console.log(img)
-  }, [img])
 
   return (
     <>
@@ -192,7 +186,7 @@ const Main = () => {
         </Flex>
         <Flex p={'64px'}>
           {/* <Image src={'/RDT_20230521_1904024212403813380167502.jpg'} /> */}
-          <Image src={imgSRC} width={256} height={256} />
+          <Image src={img} width={256} height={256} />
         </Flex>
       </main>
     </>
