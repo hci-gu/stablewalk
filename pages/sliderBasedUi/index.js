@@ -89,11 +89,15 @@ const Prompt = ({ prompt }) => {
     setPrompts(() => newPrompts)
   }
 
-  const [text, setText] = useState(prompt.label)
-  const [weight, setWeight] = useState(prompt.weight)
+  const updatePrompts = (id, field, value) => {
+    const newArr = [...prompts]
 
-  prompt.label = text
-  prompt.weight = weight
+    const index = newArr.findIndex((obj) => obj.id === id)
+
+    newArr[index] = { ...newArr[index], [field]: value }
+
+    setPrompts(newArr)
+  }
 
   return (
     <Flex direction="row" align="center" gap={0}>
@@ -110,10 +114,15 @@ const Prompt = ({ prompt }) => {
               backgroundColor: '#515262',
             },
           }}
-          value={text}
-          onChange={(e) => setText(e.currentTarget.value)}
+          value={prompt.label}
+          onChange={(e) => updatePrompts(prompt.id, 'label', e.target.value)}
         />
-        <Slider defaultValue={weight} onChange={(e) => setWeight(e)} />
+        <Slider
+          defaultValue={prompt.weight}
+          onChange={(value) => {
+            updatePrompts(prompt.id, 'weight', value)
+          }}
+        />
       </Flex>
     </Flex>
   )
