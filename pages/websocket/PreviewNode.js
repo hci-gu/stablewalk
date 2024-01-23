@@ -8,7 +8,8 @@ import { imageAtom } from './state'
 const PreviewNode = ({ xPos, yPos, ...props }) => {
   const instance = useReactFlow()
   const image = useAtomValue(imageAtom)
-  const imageSrc = `data:image/jpeg;base64,${image}`
+  console.log(atob(image))
+  const imageSrc = `data:image/jpeg;base64,${atob(image)}`
   //   const store = useStoreApi()
   //   const { nodeInternals } = store.getState()
   //   const nodes = Array.from(nodeInternals.values())

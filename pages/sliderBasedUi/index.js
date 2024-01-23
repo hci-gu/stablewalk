@@ -8,8 +8,8 @@ import {
   TextInput,
 } from '@mantine/core'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
-import getImage, { promptsAtom } from './state'
-import { useState } from 'react'
+import getImage, { imgAtom, promptsAtom } from './state'
+import { useEffect, useState } from 'react'
 import { seedAtom } from '../../src/state'
 import { IconTrash } from '@tabler/icons'
 
@@ -134,25 +134,41 @@ const PromptContainer = () => {
   )
 }
 
-const axiosPost = async (prompts, seed) => {
-  const p = prompts.map((p) => {
-    return p.label
-  })
+const ImgGetter = () => {
+  const prompts = useAtomValue(promptsAtom)
+  const seed = useAtomValue(seedAtom)
+  const setImg = useSetAtom(imgAtom)
 
-  console.log('prompts', p)
+  const sendFunc = async () => {
+    const p = prompts.map((p) => {
+      return p.label
+    })
+    const w = prompts.map((p) => {
+      return p.weight
+    })
+    const res = await getImage(p, w, seed)
+    if (res) {
+      console.log('got a res')
+    }
+    setImg(res)
+  }
 
-  const w = prompts.map((p) => {
-    return p.weight
-  })
-  console.log('weights', w)
-
-  const res = await getImage(p, w, seed)
-  console.log(res)
+  return (
+    <>
+      <Button onClick={sendFunc}>get img response</Button>
+    </>
+  )
 }
 
 const Main = () => {
-  const prompts = useAtomValue(promptsAtom)
-  const seed = useAtomValue(seedAtom)
+  const img = useAtomValue(imgAtom)
+  let imgSRC = `data:image/jpg;base64,${img}`
+
+  useEffect(() => {
+    // imgSRC = `data:image/jpeg;base64,${img}`
+    console.log(img)
+  }, [img])
+
   return (
     <>
       <main style={{ display: 'flex', width: '100%', height: '100%' }}>
@@ -167,9 +183,7 @@ const Main = () => {
           <Flex gap={32}>
             <Flex align={'center'} direction={'column'} gap={8}>
               <PromptAdder />
-              <Button onClick={() => axiosPost(prompts, seed)}>
-                get img response
-              </Button>
+              <ImgGetter />
               <Divider orientation="horizontal" w={'100%'} my={8} />
               <PromptContainer />
             </Flex>
@@ -177,7 +191,8 @@ const Main = () => {
           </Flex>
         </Flex>
         <Flex p={'64px'}>
-          <Image src={'/RDT_20230521_1904024212403813380167502.jpg'} />
+          {/* <Image src={'/RDT_20230521_1904024212403813380167502.jpg'} /> */}
+          <Image src={imgSRC} width={256} height={256} />
         </Flex>
       </main>
     </>

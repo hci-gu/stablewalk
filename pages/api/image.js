@@ -61,6 +61,7 @@ export default async function handler(req, res) {
   console.log(body)
 
   axios.post('http://130.241.23.151:4000/combine', body).then((response) => {
+    res.setHeader('Content-Type', 'image/jpeg')
     res.send(response.data)
   })
 
