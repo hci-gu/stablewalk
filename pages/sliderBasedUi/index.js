@@ -92,6 +92,8 @@ const Prompt = ({ prompt }) => {
   const updatePrompts = (id, field, value) => {
     const newArr = [...prompts]
 
+    console.log(newArr)
+
     const index = newArr.findIndex((obj) => obj.id === id)
 
     newArr[index] = { ...newArr[index], [field]: value }
@@ -101,7 +103,7 @@ const Prompt = ({ prompt }) => {
 
   return (
     <Flex direction="row" align="center" gap={0}>
-      <Button variant="transparent" onClick={delatePrompt}>
+      <Button variant="transparent">
         <IconTrash size={25} color="#ED6969" />
       </Button>
 
@@ -118,7 +120,7 @@ const Prompt = ({ prompt }) => {
           onChange={(e) => updatePrompts(prompt.id, 'label', e.target.value)}
         />
         <Slider
-          defaultValue={prompt.weight}
+          value={prompt.weight}
           onChange={(value) => {
             updatePrompts(prompt.id, 'weight', value)
           }}
@@ -132,7 +134,7 @@ const PromptContainer = () => {
   const promptsListener = useAtomValue(promptsAtom)
 
   useEffect(() => {
-    console.table(promptsListener)
+    // console.table(promptsListener)
   }, [promptsListener])
 
   return (
