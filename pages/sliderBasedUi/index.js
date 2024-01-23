@@ -73,9 +73,7 @@ const SeedSelector = () => {
 const PromptAdder = () => {
   return (
     <>
-      <Text size={32}>
-        New Prompt
-      </Text>
+      <Text size={32}>New Prompt</Text>
       <NewPrompt />
       <SeedSelector />
     </>
@@ -154,6 +152,7 @@ const Main = () => {
           <Flex gap={32}>
             <Flex align={'center'} direction={'column'} gap={8}>
               <PromptAdder />
+              <Divider orientation="horizontal" w={'100%'} my={8} />
               <PromptContainer />
             </Flex>
             <Divider
