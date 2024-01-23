@@ -7,8 +7,8 @@ import {
   Text,
   TextInput,
 } from '@mantine/core'
-import { useAtom, useSetAtom } from 'jotai'
-import { promptsAtom } from './state'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
+import getImage, { promptsAtom } from './state'
 import { useState } from 'react'
 import { seedAtom } from '../../src/state'
 import { IconTrash } from '@tabler/icons'
@@ -19,7 +19,7 @@ const NewPrompt = () => {
 
   const addAndReset = (e) => {
     e.preventDefault()
-    
+
     setPrompts((s) => [...s, { id: s.length, label: prompt, weight: 0 }])
     setPrompt('')
   }
@@ -104,7 +104,6 @@ const PromptContainer = () => {
   const [prompts, setPrompts] = useAtom(promptsAtom)
 
   const deletePrompt = (id) => {
-
     setPrompts((s) => s.filter((val) => val.id !== id))
   }
 
@@ -135,7 +134,25 @@ const PromptContainer = () => {
   )
 }
 
+const axiosPost = async (prompts, seed) => {
+  const p = prompts.map((p) => {
+    return p.label
+  })
+
+  console.log('prompts', p)
+
+  const w = prompts.map((p) => {
+    return p.weight
+  })
+  console.log('weights', w)
+
+  const res = await getImage(p, w, seed)
+  console.log(res)
+}
+
 const Main = () => {
+  const prompts = useAtomValue(promptsAtom)
+  const seed = useAtomValue(seedAtom)
   return (
     <>
       <main style={{ display: 'flex', width: '100%', height: '100%' }}>
@@ -150,6 +167,9 @@ const Main = () => {
           <Flex gap={32}>
             <Flex align={'center'} direction={'column'} gap={8}>
               <PromptAdder />
+              <Button onClick={() => axiosPost(prompts, seed)}>
+                get img response
+              </Button>
               <Divider orientation="horizontal" w={'100%'} my={8} />
               <PromptContainer />
             </Flex>

@@ -1,3 +1,4 @@
+import axios from 'axios'
 import { atom } from 'jotai'
 
 export const promptsAtom = atom([
@@ -17,3 +18,5 @@ const getImage = async (prompts, weights, seed) => {
 
   return response.data
 }
+
+export default getImage
