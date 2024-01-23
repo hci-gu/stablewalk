@@ -147,12 +147,7 @@ const Main = () => {
               <Divider orientation="horizontal" w={'100%'} my={8} />
               <PromptContainer />
             </Flex>
-            <Divider
-              orientation="vertical"
-              size={'sm'}
-              h={'75vh'}
-              variant="solid"
-            />
+            <Divider orientation="vertical" h={'75vh'} variant="solid" />
           </Flex>
         </Flex>
         <Flex p={'64px'}>
