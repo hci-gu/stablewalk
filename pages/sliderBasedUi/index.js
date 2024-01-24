@@ -149,15 +149,19 @@ const ImgGetter = () => {
     const res = await getImage(p, w, seed)
     if (res) {
       console.log('got a res')
+      setImg(res)
     }
-    setImg(res)
   }
 
-  return (
-    <>
-      <Button onClick={sendFunc}>get img response</Button>
-    </>
-  )
+  useEffect(() => {
+    sendFunc()
+  }, [prompts, seed])
+
+  // return (
+  //   <>
+  //     <Button onClick={sendFunc}>get img response</Button>
+  //   </>
+  // )
 }
 
 const Main = () => {
@@ -167,7 +171,7 @@ const Main = () => {
     <>
       <main style={{ display: 'flex', width: '100%', height: '100%' }}>
         <Flex
-          w={'40vw'}
+          // w={'40vw'}
           // bg={'#464755'}
           px={16}
           py={18}
@@ -184,9 +188,9 @@ const Main = () => {
             <Divider orientation="vertical" h={'75vh'} variant="solid" />
           </Flex>
         </Flex>
-        <Flex p={'64px'}>
+        <Flex p={'64px'} w={'100%'} justify={'center'}>
           {/* <Image src={'/RDT_20230521_1904024212403813380167502.jpg'} /> */}
-          <Image src={img} width={256} height={256} />
+          <Image src={img} width={512} height={512} />
         </Flex>
       </main>
     </>
