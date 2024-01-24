@@ -9,7 +9,7 @@ import {
 } from '@mantine/core'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import getImage, { imgAtom, promptsAtom } from './state'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { seedAtom, settingsAtom } from '../../src/state'
 import { IconTrash } from '@tabler/icons'
 
@@ -138,21 +138,32 @@ const ImgGetter = () => {
   const seed = useAtomValue(seedAtom)
   const setImg = useSetAtom(imgAtom)
   const { basePromot } = useAtomValue(settingsAtom)
-
-  const sendFunc = async () => {
-    if (prompts.length !== 0) {
-      const p = prompts.map((p) => {
-        return p.label
-      })
-      const w = prompts.map((p) => {
-        return p.weight
-      })
-      const res = getImage(p, w, seed, basePromot)
-      setImg(res)
-    }
-  }
+  const imageQueue = useMemo(() => [])
 
   useEffect(() => {
+    const sendFunc = async () => {
+      if (prompts.length !== 0) {
+        const p = prompts.map((p) => {
+          return p.label
+        })
+        const w = prompts.map((p) => {
+          return p.weight
+        })
+
+        console.log('sendFunc', currentImageRequest)
+        if (imageQueue.promise == null) {
+          const res = getImage(p, w, seed, basePromot)
+          currentImageRequest.promise = res
+          console.log('promise set', currentImageRequest)
+          const image = await res
+          setImg(image)
+          console.log('img set', image)
+          currentImageRequest.promise = null
+        } else {
+          console.log('we are waiting, ignore')
+        }
+      }
+    }
     sendFunc()
   }, [prompts, seed])
 }
