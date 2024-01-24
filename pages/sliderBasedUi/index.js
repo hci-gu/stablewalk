@@ -3,7 +3,10 @@ import {
   Divider,
   Flex,
   Image,
+  Modal,
+  NativeSelect,
   Slider,
+  Tabs,
   Text,
   TextInput,
 } from '@mantine/core'
@@ -12,6 +15,7 @@ import getImage, { imgAtom, promptsAtom } from './state'
 import { useEffect, useMemo, useState } from 'react'
 import { seedAtom, settingsAtom } from '../../src/state'
 import { IconTrash } from '@tabler/icons'
+import { useDisclosure } from '@mantine/hooks'
 
 const NewPrompt = () => {
   const [prompt, setPrompt] = useState('')
@@ -168,8 +172,38 @@ const ImgGetter = () => {
   }, [prompts, seed])
 }
 
+const PromptModal = ({ opened, close }) => {
+  return (
+    <Modal opened={opened} onClose={close} title="Promps" centered>
+      <Tabs defaultValue="Load">
+        <Tabs.List>
+          <Tabs.Tab value="Load">Load</Tabs.Tab>
+          <Tabs.Tab value="Save prompt">Save prompt</Tabs.Tab>
+        </Tabs.List>
+
+        <Tabs.Panel value="Load">
+          <Flex direction="column" gap="lg">
+            <Text size="xl">Save prompt</Text>
+
+            <NativeSelect data={['React', 'Angular', 'Svelte', 'Vue']} />
+            <Flex gap="xl">
+              <Button variant="filled">Load</Button>
+              <Button variant="filled" color="red">
+                Delete
+              </Button>
+            </Flex>
+          </Flex>
+        </Tabs.Panel>
+
+        <Tabs.Panel value="Save prompt">Save prompt tab content</Tabs.Panel>
+      </Tabs>
+    </Modal>
+  )
+}
+
 const Main = () => {
   const img = useAtomValue(imgAtom)
+  const [opened, { open, close }] = useDisclosure(false)
 
   return (
     <>
@@ -189,6 +223,9 @@ const Main = () => {
               <ImgGetter />
               <Divider orientation="horizontal" w={'100%'} my={8} />
               <PromptContainer />
+              <Button onClick={open} w="100%">
+                Open seve Prompts
+              </Button>
             </Flex>
           </Flex>
         </Flex>
@@ -196,6 +233,8 @@ const Main = () => {
         <Flex w={'100%'} justify={'center'} align={'center'}>
           {/* <Image src={'/RDT_20230521_1904024212403813380167502.jpg'} /> */}
           <Image src={img} width={512} height={512} pl={32} />
+
+          <PromptModal opened={opened} close={close} />
         </Flex>
       </main>
     </>
