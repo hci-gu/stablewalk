@@ -66,12 +66,12 @@ const Layout = ({ children, pageHeader }) => {
     <AppShell
       header={
         <Header>
-          <Tabs
+          {/* <Tabs
             value={router.pathname}
             onTabChange={(value) => router.push(value)}
             pos="relative"
-          >
-            <Tabs.List p={4}>
+          > */}
+            {/* <Tabs.List p={4}>
               <Tabs.Tab value="/">Grid</Tabs.Tab>
               <Tabs.Tab value="/canvas">Canvas</Tabs.Tab>
               <Tabs.Tab value="/benchmark">Benchmark</Tabs.Tab>
@@ -88,19 +88,19 @@ const Layout = ({ children, pageHeader }) => {
                   visible={visible}
                 />
               </Container>
-            </Tabs.List>
-            {visible && (
+            </Tabs.List> */}
+            {/* {visible && (
               <Flex p="md" align="center" gap="md">
                 <PromptSettings />
                 <Divider orientation="vertical" />
                 {pageHeader}
               </Flex>
             )}
-          </Tabs>
+          </Tabs> */}
         </Header>
       }
     >
-      <Container pt={visible ? 225 : 60} h="100%" fluid>
+      <Container  h="100%" fluid>
         {children}
       </Container>
     </AppShell>

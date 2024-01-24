@@ -173,7 +173,8 @@ const Main = () => {
         <Flex
           // w={'40vw'}
           // bg={'#464755'}
-          px={16}
+          // px={16}
+          pr={32}
           py={18}
           align={'center'}
           direction={'column'}
@@ -185,10 +186,10 @@ const Main = () => {
               <Divider orientation="horizontal" w={'100%'} my={8} />
               <PromptContainer />
             </Flex>
-            <Divider orientation="vertical" h={'75vh'} variant="solid" />
           </Flex>
         </Flex>
-        <Flex p={'64px'} w={'100%'} justify={'center'}>
+            <Divider orientation="vertical" h={'100%'} variant="solid" />
+        <Flex p={'64px'} w={'100%'} justify={'center'} align={'center'}>
           {/* <Image src={'/RDT_20230521_1904024212403813380167502.jpg'} /> */}
           <Image src={img} width={512} height={512} />
         </Flex>
