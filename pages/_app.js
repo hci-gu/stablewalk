@@ -60,7 +60,7 @@ const ToggleHeaderButton = ({ onClick, visible }) => {
 
 const Layout = ({ children, pageHeader }) => {
   const router = useRouter()
-  const [visible, setVisible] = useState(true)
+  const [visible, setVisible] = useState(false)
 
   return (
     <AppShell
@@ -89,13 +89,13 @@ const Layout = ({ children, pageHeader }) => {
                 />
               </Container>
             </Tabs.List>
-            {/* {visible && (
+            {visible && (
               <Flex p="md" align="center" gap="md">
                 <PromptSettings />
                 <Divider orientation="vertical" />
                 {pageHeader}
               </Flex>
-            )} */}
+            )}
           </Tabs>
         </Header>
       }
