@@ -1,5 +1,6 @@
 import axios from 'axios'
-import { atom } from 'jotai'
+import { atom, useAtomValue } from 'jotai'
+import { settingsAtom } from '../../src/state'
 
 export const promptsAtom = atom([
   { id: 0, label: 'Cat', weight: 33 },
@@ -9,22 +10,46 @@ export const promptsAtom = atom([
 
 export const imgAtom = atom()
 
-const getImage = async (prompts, weights, seed) => {
-  const body = {
-    prompts,
-    weights: weights.map((w) => w / 100),
-    seed,
-  }
+// const getImage = async (prompts, weights, seed, basePrompt) => {
+//   const body = {
+//     prompts: prompts.map((p) => p + basePrompt),
+//     weights: weights.map((w) => w / 100),
+//     seed,
+//   }
 
-  const response = await axios.post(
-    `http://130.241.23.151:4000/combine`,
-    body,
-    {
-      responseType: 'blob',
+//   const response = await axios.post(
+//     `http://130.241.23.151:4000/combine`,
+//     body,
+//     {
+//       responseType: 'blob',
+//     }
+//   )
+
+//   return URL.createObjectURL(response.data)
+// }
+
+// export default getImage
+
+const getImage = async (prompts, weights, seed, basePrompt) => {
+  return new Promise(async function (reslove, reject) {
+    const body = {
+      prompts: prompts.map((p) => p + basePrompt),
+      weights: weights.map((w) => w / 100),
+      seed,
     }
-  )
 
-  return URL.createObjectURL(response.data)
+    const response = await axios.post(
+      `http://130.241.23.151:4000/combine`,
+      body,
+      {
+        responseType: 'blob',
+      }
+    )
+    if (response) {
+      reslove(URL.createObjectURL(response.data))
+    }
+    reject()
+  })
 }
 
 export default getImage

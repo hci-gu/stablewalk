@@ -10,7 +10,7 @@ import {
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import getImage, { imgAtom, promptsAtom } from './state'
 import { useEffect, useState } from 'react'
-import { seedAtom } from '../../src/state'
+import { seedAtom, settingsAtom } from '../../src/state'
 import { IconTrash } from '@tabler/icons'
 
 const NewPrompt = () => {
@@ -20,7 +20,7 @@ const NewPrompt = () => {
   const addAndReset = (e) => {
     e.preventDefault()
 
-    setPrompts((s) => [...s, { id: s.length, label: prompt, weight: 0 }])
+    setPrompts((s) => [...s, { id: s.length + 1, label: prompt, weight: 0 }])
     setPrompt('')
   }
 
@@ -89,7 +89,7 @@ const Prompt = ({ prompt, onDelete, onChange }) => {
         />
         <Slider
           min={0}
-          max={300}
+          max={100}
           value={prompt.weight}
           onChange={(value) => {
             onChange(prompt.id, 'weight', value)
@@ -102,7 +102,6 @@ const Prompt = ({ prompt, onDelete, onChange }) => {
 
 const PromptContainer = () => {
   const [prompts, setPrompts] = useAtom(promptsAtom)
-
   const deletePrompt = (id) => {
     setPrompts((s) => s.filter((val) => val.id !== id))
   }
@@ -138,17 +137,17 @@ const ImgGetter = () => {
   const prompts = useAtomValue(promptsAtom)
   const seed = useAtomValue(seedAtom)
   const setImg = useSetAtom(imgAtom)
+  const { basePromot } = useAtomValue(settingsAtom)
 
   const sendFunc = async () => {
-    const p = prompts.map((p) => {
-      return p.label
-    })
-    const w = prompts.map((p) => {
-      return p.weight
-    })
-    const res = await getImage(p, w, seed)
-    if (res) {
-      console.log('got a res')
+    if (prompts.length !== 0) {
+      const p = prompts.map((p) => {
+        return p.label
+      })
+      const w = prompts.map((p) => {
+        return p.weight
+      })
+      const res = getImage(p, w, seed, basePromot)
       setImg(res)
     }
   }
@@ -156,12 +155,6 @@ const ImgGetter = () => {
   useEffect(() => {
     sendFunc()
   }, [prompts, seed])
-
-  // return (
-  //   <>
-  //     <Button onClick={sendFunc}>get img response</Button>
-  //   </>
-  // )
 }
 
 const Main = () => {
@@ -179,7 +172,7 @@ const Main = () => {
           align={'center'}
           direction={'column'}
         >
-          <Flex gap={32}>
+          <Flex>
             <Flex align={'center'} direction={'column'} gap={8}>
               <PromptAdder />
               <ImgGetter />
@@ -188,10 +181,10 @@ const Main = () => {
             </Flex>
           </Flex>
         </Flex>
-            <Divider orientation="vertical" h={'100%'} variant="solid" />
-        <Flex p={'64px'} w={'100%'} justify={'center'} align={'center'}>
+        <Divider orientation="vertical" h={'100%'} variant="solid" />
+        <Flex w={'100%'} justify={'center'} align={'center'}>
           {/* <Image src={'/RDT_20230521_1904024212403813380167502.jpg'} /> */}
-          <Image src={img} width={512} height={512} />
+          <Image src={img} width={512} height={512} pl={32} />
         </Flex>
       </main>
     </>
