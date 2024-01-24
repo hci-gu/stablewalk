@@ -137,12 +137,13 @@ const PromptContainer = () => {
   )
 }
 
+const imageQueue = []
+
 const ImgGetter = () => {
   const prompts = useAtomValue(promptsAtom)
   const seed = useAtomValue(seedAtom)
   const setImg = useSetAtom(imgAtom)
   const { basePromot } = useAtomValue(settingsAtom)
-  const imageQueue = useMemo(() => [])
 
   useEffect(() => {
     const sendFunc = async () => {
@@ -154,18 +155,14 @@ const ImgGetter = () => {
           return p.weight
         })
 
-        console.log('sendFunc', currentImageRequest)
-        if (imageQueue.promise == null) {
-          const res = getImage(p, w, seed, basePromot)
-          currentImageRequest.promise = res
-          console.log('promise set', currentImageRequest)
-          const image = await res
-          setImg(image)
-          console.log('img set', image)
-          currentImageRequest.promise = null
-        } else {
-          console.log('we are waiting, ignore')
+        if (imageQueue.length > 0) {
+          return
         }
+        const imageRequest = getImage(p, w, seed, basePromot)
+        imageQueue.push(imageRequest)
+        const image = await imageRequest
+        setImg(image)
+        imageQueue.shift()
       }
     }
     sendFunc()
