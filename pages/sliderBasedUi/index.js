@@ -10,7 +10,9 @@ import {
   Text,
   TextInput,
 } from '@mantine/core'
-import { useAtom, useAtomValue, useSetAtom } from 'jotai'
+import dynamic from 'next/dynamic'
+import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai'
+import { atomWithStorage } from 'jotai/utils'
 import getImage, { imgAtom, promptsAtom } from './state'
 import { useEffect, useMemo, useState } from 'react'
 import { seedAtom, settingsAtom } from '../../src/state'
@@ -238,4 +240,6 @@ const Main = () => {
   )
 }
 
-export default Main
+export default dynamic(async () => Main, {
+  ssr: false,
+})
