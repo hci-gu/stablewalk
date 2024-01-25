@@ -199,6 +199,17 @@ const BasePromotInput = () => {
   )
 }
 
+[
+  {
+    basePrompt: '4k photo of a cat',
+    promptsArray:[
+      {id: 1, label: 'With a hat', weight: 0}
+    ]
+  }
+]
+
+
+
 export const PromptModal = ({ opened, close }) => {
   const promptStorge = getLocalStore('Prompt')
   const setPrompts = useSetAtom(promptsAtom)
@@ -206,7 +217,7 @@ export const PromptModal = ({ opened, close }) => {
   const [selected, setSelected] = useState(selectedPrompt.label || '')
   const loadPrompt = () => {
     console.log('load prompt', selected)
-    const i = promptStorge.findIndex((p, index) => p.label === selected)
+    const i = promptStorge.findIndex((p) => p.label === selected)
     console.log(promptStorge[i])
     setPrompts((s) => [...s, promptStorge[i]])
   }
