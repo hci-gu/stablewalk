@@ -13,7 +13,7 @@ import {
 import dynamic from 'next/dynamic'
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
-import getImage, { imgAtom, promptsAtom } from './state'
+import getImage, { imgAtom, mainPromtAtom, promptsAtom } from './state'
 import { useEffect, useMemo, useState } from 'react'
 import { seedAtom, settingsAtom } from '../../src/state'
 import { IconTrash } from '@tabler/icons'
@@ -139,13 +139,14 @@ const PromptContainer = () => {
   )
 }
 
-const imageQueue = []
+// const imageQueue = []
 
 const ImgGetter = () => {
   const prompts = useAtomValue(promptsAtom)
   const seed = useAtomValue(seedAtom)
   const setImg = useSetAtom(imgAtom)
   const { basePromot } = useAtomValue(settingsAtom)
+  const imageQueue = useMemo(() => [], [])
 
   useEffect(() => {
     const sendFunc = async () => {
@@ -169,6 +170,22 @@ const ImgGetter = () => {
     }
     sendFunc()
   }, [prompts, seed])
+}
+
+const BasePromotInput = () => {
+  const [{ basePrompt }, set] = useAtom(settingsAtom)
+  return (
+    <>
+      <TextInput
+        w={'70vh'}
+        placeholder="dog"
+        value={basePrompt}
+        onChange={(e) => {
+          set({ basePrompt: e.target.value })
+        }}
+      />
+    </>
+  )
 }
 
 const PromptModal = ({ opened, close }) => {
@@ -228,11 +245,16 @@ const Main = () => {
             </Flex>
           </Flex>
         </Flex>
-        <Divider orientation="vertical" h={'100%'} variant="solid" />
-        <Flex w={'100%'} justify={'center'} align={'center'}>
+        <Divider orientation="vertical" h={'100%'} variant="solid" pr={32} />
+        <Flex
+          w={'100%'}
+          justify={'center'}
+          align={'center'}
+          direction={'column'}
+        >
           {/* <Image src={'/RDT_20230521_1904024212403813380167502.jpg'} /> */}
-          <Image src={img} width={512} height={512} pl={32} />
-
+          <Image src={img} width={'70vh'} height={'70vh'} />
+          <BasePromotInput />
           <PromptModal opened={opened} close={close} />
         </Flex>
       </main>
