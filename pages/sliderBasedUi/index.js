@@ -201,11 +201,14 @@ const BasePromotInput = () => {
 
 export const PromptModal = ({ opened, close }) => {
   const promptStorge = getLocalStore('Prompt')
-
+  const setPrompts = useSetAtom(promptsAtom)
   const selectedPrompt = getLocalStore('selectedPrompt')
   const [selected, setSelected] = useState(selectedPrompt.label || '')
   const loadPrompt = () => {
     console.log('load prompt', selected)
+    const i = promptStorge.findIndex((p, index) => p.label === selected)
+    console.log(promptStorge[i])
+    setPrompts((s) => [...s, promptStorge[i]])
   }
 
   return (
