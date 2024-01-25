@@ -182,7 +182,7 @@ const ImgGetter = () => {
 }
 
 const BasePromptInput = () => {
-  const [{ basePrompt }, setBasePrompt] = useAtom(settingsAtom)
+  const [{ basePrompt }, set] = useAtom(settingsAtom)
   return (
     <>
       <form>
@@ -222,8 +222,10 @@ export const PromptModal = ({ opened, close }) => {
   const promptStorge = getLocalStore('Prompt')
   const setPrompts = useSetAtom(promptsAtom)
   const selectedPromptStorge = getLocalStore('selectedPrompt')
-  const [selected, setSelected] = useState(selectedPromptStorge.basePrompt || promptStorge[0]?.basePrompt || '')
-
+  const [selected, setSelected] = useState(
+    selectedPromptStorge.basePrompt || promptStorge[0]?.basePrompt || ''
+  )
+  const [{ basePrompt }, setBasePrompt] = useAtom(settingsAtom)
   const loadPrompt = () => {
     const i = promptStorge.findIndex((p) => p.basePrompt === selected)
 
