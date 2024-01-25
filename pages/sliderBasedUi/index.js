@@ -23,10 +23,20 @@ const NewPrompt = () => {
   const [prompt, setPrompt] = useState('')
   const setPrompts = useSetAtom(promptsAtom)
 
+  const getUniqueId = (array) => {
+    console.log(array)
+    if (array.length > 0) {
+      return array[array.length - 1].id + 1
+    }
+    console.log(array.length)
+
+    return 1
+  }
+
   const addAndReset = (e) => {
     e.preventDefault()
 
-    setPrompts((s) => [...s, { id: s.length + 1, label: prompt, weight: 0 }])
+    setPrompts((s) => [...s, { id: getUniqueId(s), label: prompt, weight: 0 }])
     setPrompt('')
   }
 
@@ -145,45 +155,46 @@ const ImgGetter = () => {
   const prompts = useAtomValue(promptsAtom)
   const seed = useAtomValue(seedAtom)
   const setImg = useSetAtom(imgAtom)
-  const { basePromot } = useAtomValue(settingsAtom)
+  const { basePrompt } = useAtomValue(settingsAtom)
   const imageQueue = useMemo(() => [], [])
 
   useEffect(() => {
     const sendFunc = async () => {
-      if (prompts.length !== 0) {
-        const p = prompts.map((p) => {
-          return p.label
-        })
-        const w = prompts.map((p) => {
-          return p.weight
-        })
+      const p = prompts.map((p) => {
+        return p.label
+      })
+      const w = prompts.map((p) => {
+        return p.weight
+      })
 
-        if (imageQueue.length > 0) {
-          return
-        }
-        const imageRequest = getImage(p, w, seed, basePromot)
-        imageQueue.push(imageRequest)
-        const image = await imageRequest
-        setImg(image)
-        imageQueue.shift()
+      if (imageQueue.length > 0) {
+        return
       }
+      const imageRequest = getImage(p, w, seed, basePrompt)
+      imageQueue.push(imageRequest)
+      const image = await imageRequest
+      setImg(image)
+      imageQueue.shift()
     }
     sendFunc()
-  }, [prompts, seed])
+    console.log(prompts)
+  }, [prompts, seed, basePrompt])
 }
 
 const BasePromotInput = () => {
   const [{ basePrompt }, set] = useAtom(settingsAtom)
   return (
     <>
-      <TextInput
-        w={'70vh'}
-        placeholder="dog"
-        value={basePrompt}
-        onChange={(e) => {
-          set({ basePrompt: e.target.value })
-        }}
-      />
+      <form>
+        <TextInput
+          w={'70vh'}
+          placeholder="dog"
+          value={basePrompt}
+          onChange={(e) => {
+            set({ basePrompt: e.target.value })
+          }}
+        />
+      </form>
     </>
   )
 }
@@ -251,6 +262,7 @@ const Main = () => {
           justify={'center'}
           align={'center'}
           direction={'column'}
+          gap={8}
         >
           {/* <Image src={'/RDT_20230521_1904024212403813380167502.jpg'} /> */}
           <Image src={img} width={'70vh'} height={'70vh'} />
