@@ -181,8 +181,8 @@ const ImgGetter = () => {
   }, [prompts, seed, basePrompt])
 }
 
-const BasePromotInput = () => {
-  const [{ basePrompt }, set] = useAtom(settingsAtom)
+const BasePromptInput = () => {
+  const [{ basePrompt }, setBasePrompt] = useAtom(settingsAtom)
   return (
     <>
       <form>
@@ -222,7 +222,10 @@ export const PromptModal = ({ opened, close }) => {
   const promptStorge = getLocalStore('Prompt')
   const setPrompts = useSetAtom(promptsAtom)
   const selectedPromptStorge = getLocalStore('selectedPrompt')
-  const [selected, setSelected] = useState(selectedPromptStorge.basePrompt || promptStorge[0].basePrompt || '')
+  const [selected, setSelected] = useState(
+    selectedPromptStorge.basePrompt || promptStorge[0].basePrompt || ''
+  )
+  const [{ basePrompt }, setBasePrompt] = useAtom(settingsAtom)
 
   const loadPrompt = () => {
     const i = promptStorge.findIndex((p) => p.basePrompt === selected)
@@ -232,6 +235,7 @@ export const PromptModal = ({ opened, close }) => {
     }
     setPrompts(promptStorge[i].promptsArray)
     setSelected(promptStorge[i].basePrompt)
+    setBasePrompt({ basePrompt: promptStorge[i].basePrompt })
     setLocalStore('selectedPrompt', promptStorge[i])
   }
 
@@ -244,9 +248,9 @@ export const PromptModal = ({ opened, close }) => {
       (propt) => propt.basePrompt !== selected
     )
 
-    console.log(prompts);
+    console.log(prompts)
 
-    setPrompts([]);
+    setPrompts([])
     setLocalStore('Prompt', prompts)
     setLocalStore('selectedPrompt', { basePrompt: '', promptsArray: [] })
   }
@@ -324,7 +328,7 @@ const Main = () => {
         >
           {/* <Image src={'/RDT_20230521_1904024212403813380167502.jpg'} /> */}
           <Image src={img} width={'70vh'} height={'70vh'} />
-          <BasePromotInput />
+          <BasePromptInput />
           <PromptModal opened={opened} close={close} />
         </Flex>
       </main>
