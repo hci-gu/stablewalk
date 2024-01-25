@@ -177,7 +177,6 @@ const ImgGetter = () => {
       imageQueue.shift()
     }
     sendFunc()
-    console.log(prompts)
   }, [prompts, seed, basePrompt])
 }
 
