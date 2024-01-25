@@ -18,6 +18,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { seedAtom, settingsAtom } from '../../src/state'
 import { IconTrash } from '@tabler/icons'
 import { useDisclosure } from '@mantine/hooks'
+import { getLocalStore } from './utils'
 
 const NewPrompt = () => {
   const [prompt, setPrompt] = useState('')
@@ -198,7 +199,15 @@ const BasePromotInput = () => {
   )
 }
 
-const PromptModal = ({ opened, close }) => {
+export const PromptModal = ({ opened, close }) => {
+  const promptStorge = getLocalStore('Prompt')
+
+  const selectedPrompt = getLocalStore('selectedPrompt')
+  const [selected, setSelected] = useState(selectedPrompt.label || '')
+  const loadPrompt = () => {
+    console.log('load prompt', selected)
+  }
+
   return (
     <Modal opened={opened} onClose={close} title="Promps" centered>
       <Tabs defaultValue="Load">
@@ -211,9 +220,16 @@ const PromptModal = ({ opened, close }) => {
           <Flex direction="column" gap="lg">
             <Text size="xl">Save prompt</Text>
 
-            <NativeSelect data={['React', 'Angular', 'Svelte', 'Vue']} />
+            <NativeSelect
+              disabled={promptStorge.length === 0}
+              value={selected}
+              onChange={(e) => setSelected(e.target.value)}
+              data={promptStorge.map((p) => p.label)}
+            />
             <Flex gap="xl">
-              <Button variant="filled">Load</Button>
+              <Button variant="filled" onClick={loadPrompt}>
+                Load
+              </Button>
               <Button variant="filled" color="red">
                 Delete
               </Button>
