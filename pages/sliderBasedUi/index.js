@@ -18,7 +18,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { seedAtom, settingsAtom } from '../../src/state'
 import { IconTrash } from '@tabler/icons'
 import { useDisclosure } from '@mantine/hooks'
-import { getLocalStore } from './utils'
+import { getLocalStore, setLocalStore } from './utils'
 
 const NewPrompt = () => {
   const [prompt, setPrompt] = useState('')
@@ -199,27 +199,56 @@ const BasePromotInput = () => {
   )
 }
 
-[
+;[
   {
     basePrompt: '4k photo of a cat',
-    promptsArray:[
-      {id: 1, label: 'With a hat', weight: 0}
-    ]
-  }
+    promptsArray: [
+      { id: 0, label: 'Cute', weight: 0 },
+      { id: 1, label: 'Fluffy', weight: 0 },
+      { id: 2, label: 'Orange fur', weight: 0 },
+    ],
+  },
+  {
+    basePrompt: '4k photo of a bike',
+    promptsArray: [
+      { id: 0, label: 'fast', weight: 0 },
+      { id: 1, label: 'big', weight: 0 },
+      { id: 2, label: 'red', weight: 0 },
+    ],
+  },
 ]
-
-
 
 export const PromptModal = ({ opened, close }) => {
   const promptStorge = getLocalStore('Prompt')
   const setPrompts = useSetAtom(promptsAtom)
-  const selectedPrompt = getLocalStore('selectedPrompt')
-  const [selected, setSelected] = useState(selectedPrompt.label || '')
+  const selectedPromptStorge = getLocalStore('selectedPrompt')
+  const [selected, setSelected] = useState(selectedPromptStorge.basePrompt || promptStorge[0].basePrompt || '')
+
   const loadPrompt = () => {
-    console.log('load prompt', selected)
-    const i = promptStorge.findIndex((p) => p.label === selected)
-    console.log(promptStorge[i])
-    setPrompts((s) => [...s, promptStorge[i]])
+    const i = promptStorge.findIndex((p) => p.basePrompt === selected)
+
+    if (i === -1) {
+      return
+    }
+    setPrompts(promptStorge[i].promptsArray)
+    setSelected(promptStorge[i].basePrompt)
+    setLocalStore('selectedPrompt', promptStorge[i])
+  }
+
+  const delitePrompt = () => {
+    if (promptStorge.length === 0) {
+      return
+    }
+
+    const prompts = promptStorge.filter(
+      (propt) => propt.basePrompt !== selected
+    )
+
+    console.log(prompts);
+
+    setPrompts([]);
+    setLocalStore('Prompt', prompts)
+    setLocalStore('selectedPrompt', { basePrompt: '', promptsArray: [] })
   }
 
   return (
@@ -238,13 +267,13 @@ export const PromptModal = ({ opened, close }) => {
               disabled={promptStorge.length === 0}
               value={selected}
               onChange={(e) => setSelected(e.target.value)}
-              data={promptStorge.map((p) => p.label)}
+              data={promptStorge.map((p) => p.basePrompt)}
             />
             <Flex gap="xl">
               <Button variant="filled" onClick={loadPrompt}>
                 Load
               </Button>
-              <Button variant="filled" color="red">
+              <Button variant="filled" color="red" onClick={delitePrompt}>
                 Delete
               </Button>
             </Flex>
