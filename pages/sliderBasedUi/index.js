@@ -242,6 +242,9 @@ const SevePromptTab = () => {
     if (index !== -1) {
       setError('Prompt already exist')
     }
+    if (promptsAtomValue.length === 0) {
+      setError('You need to add at least one prompt')
+    }
   }, [value, prompts])
 
   /* Save prompt event */
