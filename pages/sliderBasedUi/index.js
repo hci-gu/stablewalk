@@ -5,7 +5,6 @@ import getImage, { imgAtom, promptsAtom } from './state'
 import { useDisclosure } from '@mantine/hooks'
 import { PromptModal } from './components/PromptModal'
 import { BasePromptInput } from './components/BasePromptInput'
-import { ImgGetter } from './components/ImgGetter'
 import { PromptContainer } from './components/PromptContainer'
 import { PromptAdder } from './components/PromptAdder'
 import { seedAtom, settingsAtom } from '../../src/state'
@@ -20,7 +19,7 @@ export const ImgGetter = () => {
 
   useEffect(() => {
     const sendFunc = async () => {
-      const p = prompts.map((p) =>  p.label)
+      const p = prompts.map((p) => p.label)
       const w = prompts.map((p) => p.weight)
 
       if (imageQueue.length > 0) {
@@ -42,19 +41,15 @@ const Main = () => {
 
   return (
     <>
-      <main style={{ display: 'flex', width: '100%', height: '100%' }}>
-        <Flex pr={32} py={18} align={'center'} direction={'column'}>
-          <Flex>
-            <Flex align={'center'} direction={'column'} gap={8}>
-              <PromptAdder />
-              <ImgGetter />
-              <Divider orientation="horizontal" w={'100%'} my={8} />
-              <PromptContainer />
-              <Button onClick={open} w="100%">
-                Open seve Prompts
-              </Button>
-            </Flex>
-          </Flex>
+      <div style={{ display: 'flex', width: '100%', height: '100%' }}>
+        <Flex pr={32} py={18} align={'center'} direction={'column'} gap={8}>
+          <PromptAdder />
+          <ImgGetter />
+          <Divider orientation="horizontal" w={'100%'} my={8} />
+          <PromptContainer />
+          <Button onClick={open} w="100%">
+            Open seve Prompts
+          </Button>
         </Flex>
         <Divider orientation="vertical" h={'100%'} variant="solid" pr={32} />
         <Flex
@@ -68,7 +63,7 @@ const Main = () => {
           <BasePromptInput />
           <PromptModal opened={opened} close={close} />
         </Flex>
-      </main>
+      </div>
     </>
   )
 }
