@@ -14,7 +14,7 @@ import {
 import dynamic from 'next/dynamic'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import getImage, { imgAtom, promptsAtom } from './state'
-import { useEffect, useMemo, useState } from 'react'
+import { use, useEffect, useMemo, useState } from 'react'
 import { seedAtom, settingsAtom } from '../../src/state'
 import { IconTrash } from '@tabler/icons'
 import { useDisclosure } from '@mantine/hooks'
@@ -274,14 +274,17 @@ const SevePromptTab = () => {
   /* Set error state */
   const [error, setError] = useState('')
 
-  /* Validate if prompt setting already exist */
   useEffect(() => {
+    /* Set error to empty */
     setError('')
 
-    /* Set error to empty */
+    /* Validate if prompt setting already exist */
     const index = prompts.findIndex((p) => p.basePrompt === value)
     if (index !== -1) {
       setError('Prompt already exist')
+    }
+    if (!value) {
+      setError('You need to add a name')
     }
     if (promptsAtomValue.length === 0) {
       setError('You need to add at least one prompt')
@@ -314,7 +317,7 @@ const SevePromptTab = () => {
             value={value}
             onChange={(e) => setValue(e.target.value)}
           />
-          <Button type="submit" disabled={!value || error} variant="filled">
+          <Button type="submit" disabled={error} variant="filled">
             Save
           </Button>
         </Flex>
@@ -325,22 +328,30 @@ const SevePromptTab = () => {
 
 export const PromptModal = ({ opened, close }) => {
   const promptStorge = getLocalStore(localStorageKeys.prompt)
-  const setPrompts = useSetAtom(promptsAtom)
+  const [promptsAtomValue, setPrompts] = useAtom(promptsAtom)
   const selectedPromptStorge = getLocalStore(localStorageKeys.selectedPrompt)
-  const [selected, setSelected] = useState(
-    selectedPromptStorge.basePrompt || promptStorge[0]?.basePrompt || ''
-  )
-  const [{ basePrompt }, setBasePrompt] = useAtom(settingsAtom)
+
+  const [selected, setSelected] = useState('')
+
+  useEffect(() => {
+    setSelected(selectedPromptStorge.basePrompt || promptStorge[0]?.basePrompt)
+  }, [promptsAtomValue])
+
+  const setBasePrompt = useSetAtom(settingsAtom)
   const loadPrompt = () => {
     const i = promptStorge.findIndex((p) => p.basePrompt === selected)
 
     if (i === -1) {
       return
     }
-    setPrompts(promptStorge[i].promptsArray)
-    setSelected(promptStorge[i].basePrompt)
-    setBasePrompt({ basePrompt: promptStorge[i].basePrompt })
-    setLocalStore(localStorageKeys.selectedPrompt, promptStorge[i])
+
+    const newPrompt = promptStorge[i]
+    
+    /* Set global variabel */
+    setPrompts(newPrompt.promptsArray)
+    setSelected(newPrompt.basePrompt)
+    setBasePrompt({ basePrompt: newPrompt.basePrompt })
+    setLocalStore(localStorageKeys.selectedPrompt, newPrompt)
   }
 
   const delitePrompt = () => {
