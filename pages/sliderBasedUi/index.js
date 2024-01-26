@@ -1,5 +1,6 @@
 import {
   Button,
+  Collapse,
   Divider,
   Flex,
   Image,
@@ -23,13 +24,15 @@ import { getLocalStore, setLocalStore } from './utils'
 const NewPrompt = () => {
   const [prompt, setPrompt] = useState('')
   const setPrompts = useSetAtom(promptsAtom)
+  const [opend, { toggle }] = useDisclosure(false)
+  const [oppositePrompt, setOppositePrompt] = useState('')
 
   const getUniqueId = (array) => {
-    console.log(array)
+    // console.log(array)
     if (array.length > 0) {
       return array[array.length - 1].id + 1
     }
-    console.log(array.length)
+    // console.log(array.length)
 
     return 1
   }
@@ -37,7 +40,23 @@ const NewPrompt = () => {
   const addAndReset = (e) => {
     e.preventDefault()
 
-    setPrompts((s) => [...s, { id: getUniqueId(s), label: prompt, weight: 0 }])
+    if (oppositePrompt === '') {
+      setPrompts((s) => [
+        ...s,
+        { id: getUniqueId(s), label: prompt, weight: 0 },
+      ])
+    } else {
+      setPrompts((s) => [
+        ...s,
+        {
+          id: getUniqueId(s),
+          label: prompt,
+          opposingPrompt: oppositePrompt,
+          weight: 0,
+        },
+      ])
+    }
+    setOppositePrompt('')
     setPrompt('')
   }
 
@@ -47,13 +66,26 @@ const NewPrompt = () => {
         <Flex w={'100%'} gap={8}>
           <TextInput
             w={'100%'}
-            placeholder="dog"
+            placeholder="Hat or fluffy fur"
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
           />
           <Button type="submit" disabled={prompt.length === 0}>
             Add
           </Button>
+          <Button onClick={toggle}></Button>
+        </Flex>
+        <Flex w={'100%'}>
+          <Collapse in={opend}>
+            <TextInput
+              pt={8}
+              placeholder="An opposing prompt"
+              value={oppositePrompt}
+              onChange={(e) => {
+                setOppositePrompt(e.target.value)
+              }}
+            />
+          </Collapse>
         </Flex>
       </form>
     </>
@@ -85,7 +117,7 @@ const SeedSelector = () => {
 const PromptAdder = () => {
   return (
     <>
-      <Text size={32}>New Prompt</Text>
+      <Text size={24}>New addetive Prompt</Text>
       <NewPrompt />
       <SeedSelector />
     </>
@@ -104,6 +136,14 @@ const Prompt = ({ prompt, onDelete, onChange }) => {
           value={prompt.label}
           onChange={(e) => onChange(prompt.id, 'label', e.target.value)}
         />
+        {prompt.opposingPrompt && (
+          <TextInput
+            value={prompt.opposingPrompt}
+            onChange={(e) => {
+              onChange(prompt.id, 'opposingPrompt', e.target.value)
+            }}
+          />
+        )}
         <Slider
           min={0}
           max={100}
@@ -177,6 +217,7 @@ const ImgGetter = () => {
       setImg(image)
       imageQueue.shift()
     }
+    console.log(prompts)
     sendFunc()
   }, [prompts, seed, basePrompt])
 }

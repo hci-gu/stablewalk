@@ -29,7 +29,7 @@ const getImage = async (prompts, weights, seed, basePrompt) => {
       responseType: 'blob',
     }
   )
-  console.log('got image response')
+  // console.log('got image response')
 
   return URL.createObjectURL(response.data)
 }
