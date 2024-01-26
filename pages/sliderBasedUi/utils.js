@@ -9,3 +9,8 @@ export const getLocalStore = (key = 'Prompt') => {
 export const setLocalStore = (key, value) => {
   localStorage.setItem(key, JSON.stringify(value))
 }
+
+export const localStorageKeys = {
+  prompt: 'Prompt',
+  selectedPrompt: 'selectedPrompt',
+}

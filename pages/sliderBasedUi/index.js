@@ -11,14 +11,13 @@ import {
   TextInput,
 } from '@mantine/core'
 import dynamic from 'next/dynamic'
-import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai'
-import { atomWithStorage } from 'jotai/utils'
-import getImage, { imgAtom, mainPromtAtom, promptsAtom } from './state'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
+import getImage, { imgAtom, promptsAtom } from './state'
 import { useEffect, useMemo, useState } from 'react'
 import { seedAtom, settingsAtom } from '../../src/state'
 import { IconTrash } from '@tabler/icons'
 import { useDisclosure } from '@mantine/hooks'
-import { getLocalStore, setLocalStore } from './utils'
+import { getLocalStore, localStorageKeys, setLocalStore } from './utils'
 
 const NewPrompt = () => {
   const [prompt, setPrompt] = useState('')
@@ -218,10 +217,72 @@ const BasePromptInput = () => {
   },
 ]
 
+const SevePromptTab = () => {
+  /* Get atom from Jotai storage */
+  const promptsAtomValue = useAtomValue(promptsAtom)
+  const settingsAtomValue = useAtomValue(settingsAtom)
+
+  /* Get atom from local storage */
+  const prompts = getLocalStore(localStorageKeys.prompt)
+
+  /* Set textInput state */
+  const [value, setValue] = useState(
+    settingsAtomValue.basePrompt.replaceAll(' ', '-')
+  )
+
+  /* Set error state */
+  const [error, setError] = useState('')
+
+  /* Validate if prompt setting already exist */
+  useEffect(() => {
+    setError('')
+
+    /* Set error to empty */
+    const index = prompts.findIndex((p) => p.basePrompt === value)
+    if (index !== -1) {
+      setError('Prompt already exist')
+    }
+  }, [value, prompts])
+
+  /* Save prompt event */
+  const savePrompt = (event) => {
+    /* Prevent default of form */
+    event.preventDefault()
+
+    /* Add to local storage (Prompt, selectedPrompt) */
+    const newPrompt = {
+      basePrompt: value,
+      promptsArray: promptsAtomValue,
+    }
+    setLocalStore(localStorageKeys.prompt, [...prompts, newPrompt])
+    setLocalStore(localStorageKeys.selectedPrompt, newPrompt)
+  }
+  return (
+    <Flex direction="column" gap="lg">
+      <Text size="xl">Save prompt</Text>
+
+      <form onSubmit={savePrompt}>
+        <Flex direction="column" gap="lg">
+          <TextInput
+            label="Name your prompt"
+            error={error}
+            placeholder="Name"
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+          />
+          <Button type="submit" disabled={!value || error} variant="filled">
+            Save
+          </Button>
+        </Flex>
+      </form>
+    </Flex>
+  )
+}
+
 export const PromptModal = ({ opened, close }) => {
-  const promptStorge = getLocalStore('Prompt')
+  const promptStorge = getLocalStore(localStorageKeys.prompt)
   const setPrompts = useSetAtom(promptsAtom)
-  const selectedPromptStorge = getLocalStore('selectedPrompt')
+  const selectedPromptStorge = getLocalStore(localStorageKeys.selectedPrompt)
   const [selected, setSelected] = useState(
     selectedPromptStorge.basePrompt || promptStorge[0]?.basePrompt || ''
   )
@@ -235,7 +296,7 @@ export const PromptModal = ({ opened, close }) => {
     setPrompts(promptStorge[i].promptsArray)
     setSelected(promptStorge[i].basePrompt)
     setBasePrompt({ basePrompt: promptStorge[i].basePrompt })
-    setLocalStore('selectedPrompt', promptStorge[i])
+    setLocalStore(localStorageKeys.selectedPrompt, promptStorge[i])
   }
 
   const delitePrompt = () => {
@@ -247,11 +308,12 @@ export const PromptModal = ({ opened, close }) => {
       (propt) => propt.basePrompt !== selected
     )
 
-    console.log(prompts)
-
     setPrompts([])
-    setLocalStore('Prompt', prompts)
-    setLocalStore('selectedPrompt', { basePrompt: '', promptsArray: [] })
+    setLocalStore(localStorageKeys.prompt, prompts)
+    setLocalStore(localStorageKeys.selectedPrompt, {
+      basePrompt: '',
+      promptsArray: [],
+    })
   }
 
   return (
@@ -264,7 +326,7 @@ export const PromptModal = ({ opened, close }) => {
 
         <Tabs.Panel value="Load">
           <Flex direction="column" gap="lg">
-            <Text size="xl">Save prompt</Text>
+            <Text size="xl">Load prompt</Text>
 
             <NativeSelect
               disabled={promptStorge.length === 0}
@@ -283,7 +345,9 @@ export const PromptModal = ({ opened, close }) => {
           </Flex>
         </Tabs.Panel>
 
-        <Tabs.Panel value="Save prompt">Save prompt tab content</Tabs.Panel>
+        <Tabs.Panel value="Save prompt">
+          <SevePromptTab />
+        </Tabs.Panel>
       </Tabs>
     </Modal>
   )
