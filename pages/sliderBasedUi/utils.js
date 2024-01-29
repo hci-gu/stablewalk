@@ -20,27 +20,19 @@ export const localStorageKeys = {
 
 export const isLableUnique = (label, newPrompt) => {
   const prompts = useAtomValue(promptsAtom)
-  let isUnique = true
-  const stringCount = {}
-  if (newPrompt) {
-    prompts.map((p) => {
-      if (p.label === label) {
-        isUnique = false
-      }
-    })
-    return isUnique
-  } else {
-    if (prompts.length > 0 && label !== '') {
-      prompts.map((p) => {
-        if (p.label === label && stringCount[p.label] > 0) {
-          isUnique = false
-        } else {
-          stringCount[p.label] = 1
-        }
-      })
-      return isUnique
-    } else {
-      return true
-    }
+  if (!label.trim()) {
+    return true
   }
+  if (newPrompt) {
+    return !prompts.some((p) => p.label === label)
+  }
+  const lableSet = new Set()
+  for (const p of prompts) {
+    console.log()
+    if (p.label === label && lableSet.has(p.label)) {
+      return false
+    }
+    lableSet.add(p.label)
+  }
+  return true
 }
