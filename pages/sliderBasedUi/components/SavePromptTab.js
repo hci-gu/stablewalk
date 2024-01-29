@@ -52,7 +52,7 @@ export const SavePromptTab = () => {
     setLocalStore(localStorageKeys.selectedPrompt, newPrompt)
   }
   return (
-    <Flex direction="column" gap="lg">
+    <Flex direction="column" gap="lg" >
       <Text size="xl">Save prompt</Text>
 
       <form onSubmit={savePrompt}>

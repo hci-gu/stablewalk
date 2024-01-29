@@ -1,4 +1,4 @@
-import { Button, Divider, Flex, Image } from '@mantine/core'
+import { Button, Divider, Flex, Image, Stack } from '@mantine/core'
 import dynamic from 'next/dynamic'
 import { useAtomValue, useSetAtom } from 'jotai'
 import getImage, { imgAtom, promptsAtom } from './state'
@@ -54,7 +54,6 @@ export const ImgGetter = () => {
 //   },
 // ]
 
-
 const Main = () => {
   const img = useAtomValue(imgAtom)
   const [opened, { open, close }] = useDisclosure(false)
@@ -66,10 +65,12 @@ const Main = () => {
           <PromptAdder />
           <ImgGetter />
           <Divider orientation="horizontal" w={'100%'} my={8} />
-          <PromptContainer />
-          <Button onClick={open} w="100%">
-            Open save Prompts
-          </Button>
+          <Stack h={'100%'} justify="space-between">
+            <PromptContainer />
+            <Button onClick={open} w="100%">
+              Open save Prompts
+            </Button>
+          </Stack>
         </Flex>
         <Divider orientation="vertical" h={'100%'} variant="solid" pr={32} />
         <Flex
