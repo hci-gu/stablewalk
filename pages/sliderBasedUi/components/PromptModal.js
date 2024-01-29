@@ -2,7 +2,7 @@ import { Button, Flex, Modal, NativeSelect, Tabs, Text } from '@mantine/core'
 import { useAtom, useSetAtom } from 'jotai'
 import { promptsAtom } from '../state'
 import { useEffect, useState } from 'react'
-import { settingsAtom } from '../../../src/state'
+import { seedAtom, settingsAtom } from '../../../src/state'
 import { getLocalStore, localStorageKeys, setLocalStore } from '../utils'
 import { SavePromptTab } from './SavePromptTab'
 
@@ -10,6 +10,7 @@ export const PromptModal = ({ opened, close }) => {
   const promptStorge = getLocalStore(localStorageKeys.prompt)
   const [promptsAtomValue, setPrompts] = useAtom(promptsAtom)
   const selectedPromptStorge = getLocalStore(localStorageKeys.selectedPrompt)
+  const setSeed = useSetAtom(seedAtom)
 
   const [selected, setSelected] = useState('')
 
@@ -29,6 +30,7 @@ export const PromptModal = ({ opened, close }) => {
 
     /* Set global variabel */
     setPrompts(newPrompt.promptsArray)
+    setSeed(newPrompt.seed)
     setSelected(newPrompt.basePrompt)
     setBasePrompt({ basePrompt: newPrompt.basePrompt })
     setLocalStore(localStorageKeys.selectedPrompt, newPrompt)
@@ -47,6 +49,7 @@ export const PromptModal = ({ opened, close }) => {
     setLocalStore(localStorageKeys.prompt, prompts)
     setLocalStore(localStorageKeys.selectedPrompt, {
       basePrompt: '',
+      seed: 0,
       promptsArray: [],
     })
   }
