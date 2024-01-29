@@ -35,6 +35,26 @@ export const ImgGetter = () => {
   }, [prompts, seed, basePrompt])
 }
 
+// ;[
+//   {
+//     basePrompt: '4k photo of a cat',
+//     promptsArray: [
+//       { id: 0, label: 'Cute', weight: 0 },
+//       { id: 1, label: 'Fluffy', weight: 0 },
+//       { id: 2, label: 'Orange fur', weight: 0 },
+//     ],
+//   },
+//   {
+//     basePrompt: '4k photo of a bike',
+//     promptsArray: [
+//       { id: 0, label: 'fast', weight: 0 },
+//       { id: 1, label: 'big', weight: 0 },
+//       { id: 2, label: 'red', weight: 0 },
+//     ],
+//   },
+// ]
+
+
 const Main = () => {
   const img = useAtomValue(imgAtom)
   const [opened, { open, close }] = useDisclosure(false)
