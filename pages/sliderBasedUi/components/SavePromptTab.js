@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import { settingsAtom } from '../../../src/state'
 import { getLocalStore, localStorageKeys, setLocalStore } from '../utils'
 
-export const SevePromptTab = () => {
+export const SavePromptTab = () => {
   /* Get atom from Jotai storage */
   const promptsAtomValue = useAtomValue(promptsAtom)
   const settingsAtomValue = useAtomValue(settingsAtom)

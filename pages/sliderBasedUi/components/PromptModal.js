@@ -4,7 +4,7 @@ import { promptsAtom } from '../state'
 import { useEffect, useState } from 'react'
 import { settingsAtom } from '../../../src/state'
 import { getLocalStore, localStorageKeys, setLocalStore } from '../utils'
-import { SevePromptTab } from './SevePromptTab'
+import { SavePromptTab } from './SavePromptTab'
 
 export const PromptModal = ({ opened, close }) => {
   const promptStorge = getLocalStore(localStorageKeys.prompt)
@@ -81,7 +81,7 @@ export const PromptModal = ({ opened, close }) => {
         </Tabs.Panel>
 
         <Tabs.Panel value="Save prompt">
-          <SevePromptTab />
+          <SavePromptTab />
         </Tabs.Panel>
       </Tabs>
     </Modal>

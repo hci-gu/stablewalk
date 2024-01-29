@@ -48,7 +48,7 @@ const Main = () => {
           <Divider orientation="horizontal" w={'100%'} my={8} />
           <PromptContainer />
           <Button onClick={open} w="100%">
-            Open seve Prompts
+            Open save Prompts
           </Button>
         </Flex>
         <Divider orientation="vertical" h={'100%'} variant="solid" pr={32} />
