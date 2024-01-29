@@ -5,7 +5,7 @@ import { SeedSelector } from './SeedSelector'
 export const PromptAdder = () => {
   return (
     <>
-      <Text size={24}>New addetive Prompt</Text>
+      <Text size={20}>New descriptive prompt</Text>
       <NewPrompt />
       <SeedSelector />
     </>

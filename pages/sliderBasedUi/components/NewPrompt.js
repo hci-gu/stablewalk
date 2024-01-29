@@ -8,7 +8,7 @@ export const NewPrompt = () => {
   const [prompt, setPrompt] = useState('')
   const setPrompts = useSetAtom(promptsAtom)
   const [opend, { toggle }] = useDisclosure(false)
-  const [oppositePrompt, setOppositePrompt] = useState('')
+  // const [oppositePrompt, setOppositePrompt] = useState('')
 
   const getUniqueId = (array) => {
     // console.log(array)
@@ -22,23 +22,20 @@ export const NewPrompt = () => {
   const addAndReset = (e) => {
     e.preventDefault()
 
-    if (oppositePrompt === '') {
-      setPrompts((s) => [
-        ...s,
-        { id: getUniqueId(s), label: prompt, weight: 0 },
-      ])
-    } else {
-      setPrompts((s) => [
-        ...s,
-        {
-          id: getUniqueId(s),
-          label: prompt,
-          opposingPrompt: oppositePrompt,
-          weight: 0,
-        },
-      ])
-    }
-    setOppositePrompt('')
+    // if (oppositePrompt === '') {
+    setPrompts((s) => [...s, { id: getUniqueId(s), label: prompt, weight: 0 }])
+    // } else {
+    //   setPrompts((s) => [
+    //     ...s,
+    //     {
+    //       id: getUniqueId(s),
+    //       label: prompt,
+    //       opposingPrompt: oppositePrompt,
+    //       weight: 0,
+    //     },
+    //   ])
+    // }
+    // setOppositePrompt('')
     setPrompt('')
   }
 
@@ -55,9 +52,9 @@ export const NewPrompt = () => {
           <Button type="submit" disabled={prompt.length === 0}>
             Add
           </Button>
-          <Button onClick={toggle}></Button>
+          {/* <Button onClick={toggle}></Button> */}
         </Flex>
-        <Flex w={'100%'}>
+        {/* <Flex w={'100%'}>
           <Collapse in={opend}>
             <TextInput
               pt={8}
@@ -68,7 +65,7 @@ export const NewPrompt = () => {
               }}
             />
           </Collapse>
-        </Flex>
+        </Flex> */}
       </form>
     </>
   )
