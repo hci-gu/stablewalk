@@ -1,14 +1,26 @@
 import { Button, Collapse, Flex, TextInput } from '@mantine/core'
-import { useSetAtom } from 'jotai'
+import { useAtomValue, useSetAtom } from 'jotai'
 import { promptsAtom } from '../state'
-import { useState } from 'react'
-import { useDisclosure } from '@mantine/hooks'
+import { useEffect, useState } from 'react'
+// import { useDisclosure } from '@mantine/hooks'
 
 export const NewPrompt = () => {
   const [prompt, setPrompt] = useState('')
   const setPrompts = useSetAtom(promptsAtom)
-  const [opend, { toggle }] = useDisclosure(false)
+  const prompts = useAtomValue(promptsAtom)
+  // const [opend, { toggle }] = useDisclosure(false)
   // const [oppositePrompt, setOppositePrompt] = useState('')
+
+  const isLableUnique = (label) => {
+    let temp = true
+    prompts.map((p) => {
+      if (p.label === label) {
+        // console.log('not unique')
+        temp = false
+      }
+    })
+    return temp
+  }
 
   const getUniqueId = (array) => {
     // console.log(array)
@@ -17,6 +29,17 @@ export const NewPrompt = () => {
     }
     // console.log(array.length)
     return 1
+  }
+
+  const isDisabled = () => {
+    const isUnique = isLableUnique(prompt)
+    // console.log('is the lable unique:', isUnique)
+    if (isUnique === false || prompt.length === 0) {
+      // console.log('Disable button')
+      return true
+    } else {
+      return false
+    }
   }
 
   const addAndReset = (e) => {
@@ -49,7 +72,7 @@ export const NewPrompt = () => {
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
           />
-          <Button type="submit" disabled={prompt.length === 0}>
+          <Button type="submit" disabled={isDisabled() == true}>
             Add
           </Button>
           {/* <Button onClick={toggle}></Button> */}
