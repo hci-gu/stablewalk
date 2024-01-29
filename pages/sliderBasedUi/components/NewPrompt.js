@@ -31,17 +31,6 @@ export const NewPrompt = () => {
     return 1
   }
 
-  const isDisabled = () => {
-    const isUnique = isLableUnique(prompt)
-    // console.log('is the lable unique:', isUnique)
-    if (isUnique === false || prompt.length === 0) {
-      // console.log('Disable button')
-      return true
-    } else {
-      return false
-    }
-  }
-
   const addAndReset = (e) => {
     e.preventDefault()
 
@@ -71,8 +60,13 @@ export const NewPrompt = () => {
             placeholder="Hat or fluffy fur"
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
+            error={
+              isLableUnique(prompt)
+                ? ''
+                : 'Prompt is not unique.'
+            }
           />
-          <Button type="submit" disabled={isDisabled() == true}>
+          <Button type="submit" disabled={prompt.length === 0}>
             Add
           </Button>
           {/* <Button onClick={toggle}></Button> */}
