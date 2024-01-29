@@ -1,5 +1,6 @@
 import { Button, Flex, Slider, TextInput } from '@mantine/core'
 import { IconTrash } from '@tabler/icons'
+import { isLableUnique } from '../utils'
 
 export const Prompt = ({ prompt, onDelete, onChange }) => {
   return (
@@ -12,6 +13,7 @@ export const Prompt = ({ prompt, onDelete, onChange }) => {
         <TextInput
           value={prompt.label}
           onChange={(e) => onChange(prompt.id, 'label', e.target.value)}
+          error={isLableUnique(prompt.label) ? '' : 'Prompt is not unique.'}
         />
         {prompt.opposingPrompt && (
           <TextInput

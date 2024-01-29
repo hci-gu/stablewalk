@@ -2,25 +2,14 @@ import { Button, Collapse, Flex, TextInput } from '@mantine/core'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { promptsAtom } from '../state'
 import { useEffect, useState } from 'react'
+import { isLableUnique } from '../utils'
 // import { useDisclosure } from '@mantine/hooks'
 
 export const NewPrompt = () => {
   const [prompt, setPrompt] = useState('')
   const setPrompts = useSetAtom(promptsAtom)
-  const prompts = useAtomValue(promptsAtom)
   // const [opend, { toggle }] = useDisclosure(false)
   // const [oppositePrompt, setOppositePrompt] = useState('')
-
-  const isLableUnique = (label) => {
-    let temp = true
-    prompts.map((p) => {
-      if (p.label === label) {
-        // console.log('not unique')
-        temp = false
-      }
-    })
-    return temp
-  }
 
   const getUniqueId = (array) => {
     // console.log(array)
@@ -60,11 +49,7 @@ export const NewPrompt = () => {
             placeholder="Hat or fluffy fur"
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
-            error={
-              isLableUnique(prompt)
-                ? ''
-                : 'Prompt is not unique.'
-            }
+            error={isLableUnique(prompt, true) ? '' : 'Prompt is not unique.'}
           />
           <Button type="submit" disabled={prompt.length === 0}>
             Add
