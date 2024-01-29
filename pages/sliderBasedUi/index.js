@@ -65,7 +65,7 @@ const Main = () => {
           <PromptAdder />
           <ImgGetter />
           <Divider orientation="horizontal" w={'100%'} my={8} />
-          <Stack h={'100%'} justify="space-between">
+          <Stack h={'100%'} w={'100%'} justify="space-between">
             <PromptContainer />
             <Button onClick={open} w="100%">
               Open save Prompts
