@@ -35,7 +35,7 @@ export const ImgGetter = () => {
   }, [prompts, seed, basePrompt])
 }
 
-// ;[
+// [
 //   {
 //     basePrompt: '4k photo of a cat',
 //     promptsArray: [

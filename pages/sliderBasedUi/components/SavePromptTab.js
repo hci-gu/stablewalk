@@ -2,13 +2,14 @@ import { Button, Flex, Text, TextInput } from '@mantine/core'
 import { useAtomValue } from 'jotai'
 import { promptsAtom } from '../state'
 import { useEffect, useState } from 'react'
-import { settingsAtom } from '../../../src/state'
+import { seedAtom, settingsAtom } from '../../../src/state'
 import { getLocalStore, localStorageKeys, setLocalStore } from '../utils'
 
 export const SavePromptTab = () => {
   /* Get atom from Jotai storage */
   const promptsAtomValue = useAtomValue(promptsAtom)
   const settingsAtomValue = useAtomValue(settingsAtom)
+  const seed = useAtomValue(seedAtom)
 
   /* Get atom from local storage */
   const prompts = getLocalStore(localStorageKeys.prompt)
@@ -46,6 +47,7 @@ export const SavePromptTab = () => {
     /* Add to local storage (Prompt, selectedPrompt) */
     const newPrompt = {
       basePrompt: value,
+      seed,
       promptsArray: promptsAtomValue,
     }
     setLocalStore(localStorageKeys.prompt, [...prompts, newPrompt])
