@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import { seedAtom, settingsAtom } from '../../../../src/state'
 import { getLocalStore, localStorageKeys, setLocalStore } from '../../utils'
 import { SavePromptTab } from './SaveTab'
-import { DeliteLoadTab } from './DeleteLoadTab'
+import { DeleteLoadTab } from './DeleteLoadTab'
 
 export const PromptModal = ({ opened, close }) => {
   /* jotai */
@@ -92,7 +92,7 @@ export const PromptModal = ({ opened, close }) => {
   }
 
   return (
-    <Modal opened={opened} onClose={close} title="Promps" centered>
+    <Modal opened={opened} onClose={close} title="Prompts" centered>
       <Tabs defaultValue="Load">
         <Tabs.List>
           <Tabs.Tab value="Load">Load</Tabs.Tab>
@@ -100,7 +100,7 @@ export const PromptModal = ({ opened, close }) => {
         </Tabs.List>
 
         <Tabs.Panel value="Load">
-          <DeliteLoadTab
+          <DeleteLoadTab
             deletePrompt={deletePrompt}
             loadPrompt={loadPrompt}
             setSelected={setSelected}
@@ -109,7 +109,7 @@ export const PromptModal = ({ opened, close }) => {
           />
         </Tabs.Panel>
 
-        <Tabs.Panel value="Save prompt">
+        <Tabs.Panel value="Save prompts">
           <SavePromptTab
             savePrompt={savePrompt}
             saveValue={saveValue}

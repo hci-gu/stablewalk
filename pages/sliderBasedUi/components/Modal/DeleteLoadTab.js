@@ -1,6 +1,6 @@
 import { Button, Flex, NativeSelect, Text } from '@mantine/core'
 
-export const DeliteLoadTab = ({
+export const DeleteLoadTab = ({
   loadPrompt,
   deletePrompt,
   selected,
