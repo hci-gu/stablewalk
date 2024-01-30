@@ -4,8 +4,8 @@ import { promptsAtom } from '../../state'
 import { useEffect, useState } from 'react'
 import { seedAtom, settingsAtom } from '../../../../src/state'
 import { getLocalStore, localStorageKeys, setLocalStore } from '../../utils'
-import { SavePromptTab } from './SeveTab'
-import { DeliteLoadTab } from './DeliteLoadTab'
+import { SavePromptTab } from './SaveTab'
+import { DeliteLoadTab } from './DeleteLoadTab'
 
 export const PromptModal = ({ opened, close }) => {
   /* jotai */
