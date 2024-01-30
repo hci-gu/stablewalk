@@ -60,16 +60,10 @@ export default async function handler(req, res) {
   // }
   console.log(body)
 
-  axios
-    .post('http://130.241.23.151:4000/combine', body, {
-      responseType: 'stream',
-    })
-    .then((response) => {
-      response.data.pipe(fs.createWriteStream(path.join(imgPath, fileName)))
-      response.data.on('end', () => {
-        res.send(`/images/${fileName}`)
-      })
-    })
+  axios.post('http://130.241.23.151:4000/combine', body).then((response) => {
+    res.setHeader('Content-Type', 'image/jpeg')
+    res.send(response.data)
+  })
 
   /*
   axios.post('http://130.241.23.151:4000/combine', body).then((response) => {

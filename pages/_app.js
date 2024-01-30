@@ -60,7 +60,7 @@ const ToggleHeaderButton = ({ onClick, visible }) => {
 
 const Layout = ({ children, pageHeader }) => {
   const router = useRouter()
-  const [visible, setVisible] = useState(true)
+  const [visible, setVisible] = useState(false)
 
   return (
     <AppShell
@@ -77,6 +77,8 @@ const Layout = ({ children, pageHeader }) => {
               <Tabs.Tab value="/benchmark">Benchmark</Tabs.Tab>
               <Tabs.Tab value="/websocket">Websocket</Tabs.Tab>
               <Tabs.Tab value="/infinite">Infinite</Tabs.Tab>
+              <Tabs.Tab value="/sidebar">sidebar</Tabs.Tab>
+              <Tabs.Tab value="/sliderBasedUi">Slider</Tabs.Tab>
               <Container pos="absolute" right={0} mt={4}>
                 <DarkMode />
               </Container>
@@ -98,7 +100,7 @@ const Layout = ({ children, pageHeader }) => {
         </Header>
       }
     >
-      <Container pt={visible ? 225 : 60} h="100%" fluid>
+      <Container pt={32} h="100%" fluid>
         {children}
       </Container>
     </AppShell>
