@@ -60,7 +60,7 @@ const ToggleHeaderButton = ({ onClick, visible }) => {
 
 const Layout = ({ children, pageHeader }) => {
   const router = useRouter()
-  const [visible, setVisible] = useState(false)
+  const [visible, setVisible] = useState(true)
 
   return (
     <AppShell
