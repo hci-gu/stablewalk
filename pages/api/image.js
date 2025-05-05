@@ -54,35 +54,40 @@ export default async function handler(req, res) {
   // return
 
   // // check if image exists
-  // if (fs.existsSync(path.join(imgPath, fileName))) {
-  //   res.send(`/images/${fileName}`)
-  //   return
-  // }
+  if (fs.existsSync(path.join(imgPath, fileName))) {
+    return res.send({
+      fileName: `/images/${encodeURI(fileName)}`,
+    })
+  }
   console.log(body)
 
-  axios.post('http://130.241.23.151:4000/combine', body).then((response) => {
-    res.setHeader('Content-Type', 'image/jpeg')
-    res.send(response.data)
-  })
-
-  /*
-  axios.post('http://130.241.23.151:4000/combine', body).then((response) => {
-    let received = new Date().getTime()
-    const { image, ...timestamps } = response.data
-    fs.writeFileSync(path.join(imgPath, fileName), image, 'base64')
-    let file_written = new Date().getTime()
-    console.log(file_written)
-    res.send({
-      image: `/images/${fileName}`,
-      timestamps: {
-        ...timestamps,
-        received,
-        file_written: file_written - received,
-      },
+  axios
+    .post('http://130.241.23.169:4000/combine', body, {
+      responseType: 'arraybuffer',
     })
-    // response.data.on('end', () => {
-    //   res.send(`/images/${fileName}`)
-    // })
-  })
-  */
+    .then((response) => {
+      fs.writeFileSync(path.join(imgPath, fileName), response.data)
+      res.send({
+        fileName: `/images/${encodeURI(fileName)}`,
+      })
+    })
+
+  // axios.post('http://130.241.23.151:4000/combine', body).then((response) => {
+  //   let received = new Date().getTime()
+  //   const { image, ...timestamps } = response.data
+  //   fs.writeFileSync(path.join(imgPath, fileName), image, 'base64')
+  //   let file_written = new Date().getTime()
+  //   console.log(file_written)
+  //   res.send({
+  //     image: `/images/${fileName}`,
+  //     timestamps: {
+  //       ...timestamps,
+  //       received,
+  //       file_written: file_written - received,
+  //     },
+  //   })
+  //   // response.data.on('end', () => {
+  //   //   res.send(`/images/${fileName}`)
+  //   // })
+  // })
 }

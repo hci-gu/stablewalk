@@ -4,7 +4,7 @@ export const seedAtom = atom(0)
 
 export const settingsAtom = atom(
   {
-    basePrompt: '4k photo of a cat', //photograph, 4k
+    basePrompt: 'photograph, 4k',
     negPrompt:
       'Photoshop, video game, ugly, tiling, out of frame, extra limbs, extra legs, extra arms, cross-eye, body out of frame, blurry, bad art, bad anatomy, 3d render',
     steps: 1,

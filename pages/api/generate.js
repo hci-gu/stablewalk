@@ -22,7 +22,7 @@ export default async function handler(req, res) {
   const fileName = fileNameFor(prompt, seed, steps, cfg, size)
 
   axios
-    .post('http://130.241.23.151:4000/generate', req.body, {
+    .post('http://130.241.23.169:4000/generate', req.body, {
       responseType: 'stream',
     })
     .then((response) => {

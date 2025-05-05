@@ -53,9 +53,9 @@ const getImage = async (
 
   const response = await axios.post(`/api/image`, body)
 
-  cache[stringified] = response.data
+  cache[stringified] = response.data.fileName
 
-  return response.data
+  return response.data.fileName
 }
 
 export const useGetImage = () => {

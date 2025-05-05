@@ -11,7 +11,7 @@ const useWebSocket = () => {
 
   // Initialize WebSocket connection
   useEffect(() => {
-    const webSocket = new WebSocket('ws://130.241.23.151:1338')
+    const webSocket = new WebSocket('ws://130.241.23.169:1338')
 
     webSocket.onopen = () => {
       console.log('WebSocket Connected')

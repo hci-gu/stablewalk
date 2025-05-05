@@ -40,7 +40,7 @@ const getImage = async (
 
   const response = await axios.post(`/api/image`, body)
 
-  return response.data
+  return response.data.fileName
 }
 const displayTime = (value) => {
   if (value.toString().includes('.')) {
@@ -50,24 +50,25 @@ const displayTime = (value) => {
 }
 
 const ImageComp = ({ image, timestamps, index }) => {
-  let start = timestamps?.start || 0
-  let inOrder = [
-    'text_embeddings',
-    'prompt_embeddings',
-    'pooled_prompt_embeddings',
-    'generate',
-    'image_save',
-    'file_written',
-  ]
-  let total = timestamps.end - start
-  let totalCompute = inOrder.reduce((acc, key) => {
-    const time = timestamps[key]
-    if (time.toString().includes('.')) {
-      return acc + time * 1000
-    }
-    return acc + time
-  }, 0)
-  let latency = total - totalCompute
+  console.log('imageCOmp', image)
+  // let start = timestamps?.start || 0
+  // let inOrder = [
+  //   'text_embeddings',
+  //   'prompt_embeddings',
+  //   'pooled_prompt_embeddings',
+  //   'generate',
+  //   'image_save',
+  //   'file_written',
+  // ]
+  // let total = timestamps.end - start
+  // let totalCompute = inOrder.reduce((acc, key) => {
+  //   const time = timestamps[key]
+  //   if (time.toString().includes('.')) {
+  //     return acc + time * 1000
+  //   }
+  //   return acc + time
+  // }, 0)
+  // let latency = total - totalCompute
   // const times = inorder.map((key, i) => {
   //   // some are in seconds with decimals, convert these to ms
   //   let time = timestamps[key]
@@ -95,8 +96,8 @@ const ImageComp = ({ image, timestamps, index }) => {
 
   return (
     <Flex direction="column" key={`Image_${index}`}>
-      <Image src={image} width={100} height={100} />
-      {inOrder.map((key) => (
+      <Image src={`/images/${image}`} width={100} height={100} />
+      {/* {inOrder.map((key) => (
         <Flex direction="column">
           <Text size={8}>{key}</Text>
           <Text size={12} fw="bold">
@@ -112,7 +113,7 @@ const ImageComp = ({ image, timestamps, index }) => {
       </Flex>
       <Text size={11}>
         Total: <strong> {timestamps.end - start}</strong>
-      </Text>
+      </Text> */}
     </Flex>
   )
 }
@@ -160,9 +161,8 @@ export default function Benchmark() {
       setImages((images) => [
         ...images,
         {
-          ...image,
+          image,
           timestamps: {
-            ...image.timestamps,
             start,
             end,
           },
